@@ -1,0 +1,459 @@
+⚙️ WHAT IS HOISTING?
+
+Hoisting = JavaScript’s default behavior of moving declarations to the top of their scope during memory creation phase.
+
+Important:
+✔ Only declarations are hoisted
+✔ Initializations stay where they are
+
+Think of it like this:
+
+CREATION PHASE (Memory Allocation)
+------------------------
+Declare variables ➝ allocate space
+Declare functions ➝ store entire function
+
+EXECUTION PHASE (Line-by-line run)
+------------------------
+Execute assignments + statements
+
+📦 EXECUTION CONTEXT — 2 PHASES
+
+Before any code runs:
+
+1️⃣ Creation Phase
+2️⃣ Execution Phase
+
+📌 1️⃣ Creation Phase
+
+During this, JS engine:
+
+✔ Allocates memory for all variables
+✔ Allocates memory for all function declarations
+✔ Sets up this
+✔ Sets up scope chain
+
+Memory Allocation:
+
+var a  → undefined
+let b  → uninitialized (TDZ)
+const c → uninitialized (TDZ)
+function foo() → entire function stored
+
+
+Important:
+
+var gets undefined
+
+let and const are hoisted but are uninitialized
+
+Accessing them before declaration ➜ ReferenceError
+
+📜 2️⃣ Execution Phase
+
+Now JS executes code top to bottom, replacing undefined with actual values.
+
+🧠 SCOPE — Where variables live
+🌍 Global Scope
+
+Defined outside all functions/blocks.
+
+In browsers, global var becomes a property of window.
+
+var a = 10;
+console.log(window.a); // 10
+
+
+But:
+
+let b = 20;
+console.log(window.b); // undefined
+
+
+So:
+| Variable | Attached to window? |
+| -------- | ------------------- |
+| var      | Yes                 |
+| let      | No                  |
+| const    | No                  |
+| function | Yes (global)        |
+
+📦 Function Scope
+
+Each function has its own scope.
+
+function fn() {
+  var x = 1;
+}
+console.log(x);  // ReferenceError
+
+🧱 Block Scope
+
+Blocks {} create scope for let and const, NOT var.
+
+{
+  var a = 1;    // global / function
+  let b = 2;    // block
+}
+console.log(a); // 1
+console.log(b); // ReferenceError
+
+🧠 VARIABLE HANDLING & HOISTING
+🟡 var
+console.log(a); // undefined
+var a = 5;
+
+
+Behind the scenes:
+
+var a;                // creation phase
+console.log(a);       // undefined
+a = 5;                // execution
+
+
+So:
+✔ var variables become undefined if accessed before declaration
+✔ No error
+
+🔵 let / const
+console.log(b); // ReferenceError
+let b = 10;
+
+console.log(c); // ReferenceError
+const c = 20;
+
+
+Even though they’re hoisted, they’re in Temporal Dead Zone (TDZ) until assigned.
+
+TDZ starts here
+console.log(b); // ❌ ReferenceError
+let b = 10;     // initialization
+TDZ ends here
+
+
+must be declared before use
+
+🧠 WHY var becomes undefined?
+
+Only var is initialized to a default value (undefined) in the creation phase.
+
+But for let/const, memory space exists but they are uninitialized and cannot be accessed until after declaration.
+
+🧠 FUNCTIONS AND HOISTING
+▶️ Function Declaration
+hello(); // works
+
+function hello() {
+  console.log("Hello!");
+}
+
+
+Both declaration and definition are hoisted:
+
+function hello() {...}  // stored
+hello();                // runs
+
+▶️ Function Expression
+sayHi(); // TypeError
+
+var sayHi = function () {
+  console.log("Hi");
+};
+
+
+Why TypeError?
+
+Behind the scenes:
+
+var sayHi = undefined;
+// sayHi() → undefined() → TypeError
+
+
+Important:
+✔ Function expressions behave like variables
+
+▶️ Arrow Function
+
+Arrow functions are also function expressions:
+
+sayHello(); // TypeError
+
+var sayHello = () => {
+  console.log("Hello");
+};
+
+
+Same as function expression.
+
+🧠 ERROR TYPES EXPLAINED
+
+Let’s see what different errors mean:
+
+❗ undefined
+
+This is a value, NOT an error.
+
+var a;
+console.log(a); // undefined
+
+
+Means: variable exists, but no value assigned yet.
+
+❌ ReferenceError
+
+Occurs when the variable is not defined in scope or inside TDZ.
+
+console.log(b); // ReferenceError
+let b = 10;
+
+❌ SyntaxError
+
+This is a compile-time error.
+
+Example:
+
+let 5hello; // SyntaxError
+
+
+Meaning: Invalid syntax — cannot run.
+
+❌ TypeError
+
+Occurs when type doesn’t support an operation.
+
+var a = undefined;
+a(); // TypeError: a is not a function
+
+🧠 WHY window.a works for var but NOT let/const
+
+Global:
+
+var a = 10;
+console.log(window.a); // 10
+
+
+But:
+
+let b = 20;
+console.log(window.b); // undefined
+
+
+➤ Because:
+
+var attaches to global object (window)
+
+let / const do NOT
+
+This explains many interview questions.
+
+📊 VISUAL MEMORY MODEL
+✳️ WHEN CODE RUNS
+1️⃣ Creation Phase
+--------------------
+var a       → undefined
+let b       → TDZ
+const c     → TDZ
+function fn → stored fully
+
+2️⃣ Execution Phase
+--------------------
+a = 10
+b = 20
+c = 30
+
+📌 SCOPES
+GLOBAL CONTEXT
+  └── var a
+  └── let b
+  └── const c
+  └── fn()
+
+FUNCTION CONTEXT
+  └── var x
+  └── let y
+  └── const z
+
+BLOCK CONTEXT (inside {})
+  └── let x
+  └── const y
+  └── (var is NOT block scoped)
+
+🟠 Summary Interview Answers
+✔ What is hoisting?
+
+JS moves declarations to the top of their scope before execution.
+
+✔ var vs let vs const
+var → hoisted + initialized (undefined)
+let/const → hoisted + uninitialized (TDZ)
+
+✔ Why window.a works only for var?
+
+var in global scope becomes a window property.
+
+✔ Function vs Arrow Function hoisting?
+function declaration → fully hoisted
+function expression / arrow → only variable hoisted → TypeError if called before init
+
+✔ Error types
+undefined → no value
+ReferenceError → not in scope
+SyntaxError → bad code
+TypeError → wrong type operation
+
+
+If you want, I can give:
+
+🔥 A console snippet you can run in browser/Node to observe these behaviors live
+🔥 A cheat sheet PDF style you can revise daily
+
+🔑 Short Answer (Interview-Ready)
+
+var gets memory in the Global Execution Context and becomes a property of window.
+let and const also get memory in the Global Execution Context, but they do NOT become properties of window.
+
+Now let’s expand this properly so there is zero confusion.
+
+🧠 1️⃣ Global Execution Context (GEC) – What gets created?
+
+When JS starts running your file:
+
+Global Execution Context is created
+
+
+Inside GEC, two important things happen:
+
+1️⃣ Memory is allocated for variables & functions
+2️⃣ Global object (window in browser) is created
+
+🧱 2️⃣ Memory Allocation in GEC (Creation Phase)
+
+Consider this code:
+
+var a = 10;
+let b = 20;
+const c = 30;
+
+🔍 During Creation Phase, memory looks like this:
+GLOBAL EXECUTION CONTEXT (Memory)
+
+a  → undefined        (var)
+b  → <uninitialized>  (let, TDZ)
+c  → <uninitialized>  (const, TDZ)
+
+
+✔ All three get memory in GEC
+❌ But they are handled differently
+
+🌍 3️⃣ var and the window object (KEY DIFFERENCE)
+
+In browser environment:
+
+var a = 10;
+
+
+➡️ This does TWO things:
+
+1️⃣ Allocates memory in GEC
+2️⃣ Attaches a to window
+
+window.a === 10  // ✅ true
+
+
+So conceptually:
+
+window = {
+  a: 10
+}
+
+🚫 4️⃣ let and const DO NOT attach to window
+let b = 20;
+const c = 30;
+
+window.b // undefined
+window.c // undefined
+
+
+Why?
+
+Because:
+
+let and const are stored in Lexical Environment
+
+They are not properties of the global object
+
+Even though they are in GEC, they live in a separate memory space
+
+🧠 5️⃣ Important Mental Model (Akshay-Style)
+
+Think of GEC like this:
+
+GLOBAL EXECUTION CONTEXT
+|
+|-- Global Object (window)
+|     |-- var variables
+|     |-- function declarations
+|
+|-- Lexical Environment
+      |-- let variables
+      |-- const variables
+
+
+✔ Same execution context
+❌ Different memory areas
+
+⚠️ 6️⃣ Why let/const are NOT on window?
+
+This was a design decision to avoid:
+
+Accidental global pollution
+
+Name collisions
+
+Bugs caused by var
+
+That’s why:
+
+let a = 10;
+
+
+is safer than:
+
+var a = 10;
+
+🧪 7️⃣ Live Example (Browser Console)
+var x = 1;
+let y = 2;
+const z = 3;
+
+console.log(window.x); // 1
+console.log(window.y); // undefined
+console.log(window.z); // undefined
+
+🧠 8️⃣ Common Interview Trap
+
+❓ Does let / const get hoisted?
+
+✔ YES
+But:
+
+They are in Temporal Dead Zone
+
+Cannot be accessed before declaration
+
+console.log(b); // ReferenceError
+let b = 10;
+
+🧾 9️⃣ One-Line Interview Answers (MEMORIZE)
+
+var → allocated in GEC + attached to window
+
+let/const → allocated in GEC but NOT attached to window
+
+let/const live in lexical environment
+
+TDZ prevents accessing variables before initialization
+
+🔥 Final Clear Sentence (BEST)
+
+In the global scope, var variables become properties of the global object, while let and const are stored in the lexical environment and are not accessible via window.
