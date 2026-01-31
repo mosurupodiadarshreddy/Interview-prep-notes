@@ -1,0 +1,71 @@
+🔥 JavaScript Execution Context (Like Akshay Saini)
+
+✅ Execution Context = The environment where JS code runs
+🟢Every piece of JS code, whether global code or inside a function, runs inside an Execution Context.
+🟢You can imagine it as a container / box that holds information about variables, functions, scope chain, this, and more.
+
+There are two main types:
+
+1️⃣ Global Execution Context (GEC)
+2️⃣ Function Execution Context (FEC)
+
+🟡 When is each created?
+🔹🔹 Global Execution Context
+🔹Created when the JS engine starts running your file/script
+🔹Only one for the entire program
+GEC
+|
+|——- Entire JS file runs here
+|
+
+🔹🔹 Function Execution Context
+Created when a function is called
+Every function call gets its own EC
+GEC
+ |
+ |---- FEC (for function A)
+ |
+ |-------- FEC (function B inside A)
+
+🔁 Two PHASES of each Execution Context
+🔹Every EC goes through two phases:
+📌 1. Creation (Memory Allocation) Phase
+
+In this phase, JS engine scans the code without running it yet and does these steps:
+
+📌 1. Create memory space for variables
+
+Variables are allocated in memory…
+
+But var variables get value undefined
+let and const are uninitialized (TDZ)
+Before execution:
+var a     → undefined
+let b     → uninitialized
+const c   → uninitialized
+
+
+📌 2. Functions are stored fully {}
+
+Functions go to memory with their code
+
+📌 3. this is set
+In GEC → this becomes global object (window in browser)
+In FEC → this depends on how function is called
+
+🟡 2. Execution Phase
+
+Now code runs line by line:
+
+✔ Variables get real values
+✔ Code executes expressions
+✔ Functions are invoked
+✔ New Execution Contexts are created for called functions
+
+🟠 Scope Chain & this
+Inside each EC, one important thing is Scope Chain — it tells JS where to look for variables.
+First check local variables
+If not found, look in parent scopes
+Until global is reached
+This explains why nested functions can access outer variables.
+

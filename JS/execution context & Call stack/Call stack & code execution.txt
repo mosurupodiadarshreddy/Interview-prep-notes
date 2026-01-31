@@ -1,0 +1,195 @@
+📌 JavaScript Code Execution & Call Stack — Akshay Saini Style
+
+JavaScript doesn’t just run your code magically — there’s a system underneath that manages how, when, and where code runs.
+
+The heart of this system is:
+
+Execution Context
+
+Call Stack
+
+And every function invocation creates a new context that goes into the call stack and comes out when done.
+
+🟡 Step-by-Step Execution
+
+Here’s the example Akshay uses (explained with boxes & stack diagrams):
+
+var n = 2;
+
+function square(num) {
+  var ans = num * num;
+  return ans;
+}
+
+var square2 = square(n);
+var square4 = square(4);
+
+
+(This is from Akshay’s video description.)
+
+🔹 1. Global Execution Context (GEC)
+
+Before any line runs:
+
+✅ JS engine creates the Global Execution Context
+✅ This is like a big container where all global stuff lives.
+
+📦 Global EC Box
+
+Execution Context: GLOBAL
+  memory:
+    n = undefined
+    square = <function code>
+    square2 = undefined
+    square4 = undefined
+  code: (the entire program)
+
+
+👉 JS fills undefined as placeholder in memory for all variables in the creation phase.
+
+🔹 2. Code Execution Begins
+
+Now JS starts executing line by line:
+
+Line 1
+n = 2;       // overrides undefined
+
+
+📦 GEC now
+
+n = 2
+square = <function>
+square2 = undefined
+square4 = undefined
+
+🟢 3. Function Call → New Execution Context
+
+When this runs:
+
+var square2 = square(n);
+
+
+JS does:
+
+Create a new Execution Context for square()
+
+Push it onto the Call Stack
+
+Run it
+
+Pop it when finished
+
+🟡 CALL STACK BEFORE function call
+|----------------|
+| Global EC      |
+|----------------|
+
+➤ Now JS calls square(n)
+
+So it creates a new context:
+
+📦 square() Execution Context
+
+Execution Context: square
+  memory:
+    num = undefined
+    ans = undefined
+  code: body of square func
+
+
+JS first allocates memory (creation phase) → num & ans both undefined.
+
+📌 Now CALL STACK
+|----------------------|
+| square EC            |
+|----------------------|
+| Global EC            |
+|----------------------|
+
+🟢 Code inside square
+
+Now it runs the function:
+
+Assigns num = 2
+
+Calculates ans = num * num = 4
+
+Returns ans
+
+Now return means:
+✔ Pop the square EC
+✔ Go back to global context
+✔ Store return value in square2
+
+square2 = 4
+
+
+📦 Call Stack after pop:
+
+|-------------------|
+| Global EC         |
+|-------------------|
+
+
+✔ square() execution is done → its context removed.
+
+🟢 Next Line
+var square4 = square(4);
+
+
+Same process repeats again:
+
+➤ New square Execution Context
+|----------------------|
+| square EC (again)    |
+|----------------------|
+| Global EC            |
+|----------------------|
+
+
+JS runs:
+
+num = 4
+ans = 16
+return 16
+
+
+→ Pop square EC
+
+Now
+
+square4 = 16
+
+🟢 Final Steps
+
+After the code finishes:
+
+Global EC has:
+n = 2
+square2 = 4
+square4 = 16
+
+
+Then:
+🔥 Program done
+🔥 Global execution context is popped
+🔥 Call Stack is EMPTY
+
+🟡 CALL STACK VISUAL (Simplified)
+| Time                | Call Stack             |
+| ------------------- | ---------------------- |
+| Start               | [Global EC]            |
+| square(n) is called | [square EC, Global EC] |
+| square returns      | [Global EC]            |
+| square(4) is called | [square EC, Global EC] |
+| square returns      | [Global EC]            |
+| End of program      | [] (empty)             |
+
+🟢 KEY POINTS (Interview Style)
+
+✅ JS code always runs inside an execution context
+✅ The global context is created first
+✅ Every function call creates a new context
+✅ The call stack keeps track of these contexts so execution order is managed
+✅ When a function finishes, its context is popped off the stack
+✅ JS is synchronous & single-threaded — so only one thing executes at a time
