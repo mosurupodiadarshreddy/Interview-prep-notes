@@ -302,11 +302,6 @@ SyntaxError → bad code
 TypeError → wrong type operation
 
 
-If you want, I can give:
-
-🔥 A console snippet you can run in browser/Node to observe these behaviors live
-🔥 A cheat sheet PDF style you can revise daily
-
 🔑 Short Answer (Interview-Ready)
 
 var gets memory in the Global Execution Context and becomes a property of window.
