@@ -1,0 +1,344 @@
+🌍 1️⃣ What is Block Scope?
+
+A block in JavaScript is anything inside {} — like inside if, for, or { } by itself.
+
+💡 Block Scope means that variables declared with let and const are ONLY available inside that block.
+
+✔ BLOCK SCOPE with let and const
+
+Example from video:
+
+{
+  let a = 10;
+  const b = 20;
+  console.log(a);  // 10
+  console.log(b);  // 20
+}
+
+console.log(a); // ❌ ReferenceError
+console.log(b); // ❌ ReferenceError
+
+
+Explanation in simple words:
+
+✔ a and b exist only inside the {} block
+✖ Outside the block, they don’t exist, so it throws a ReferenceError
+
+🔥 2️⃣ What about var inside a block?
+
+Example from video:
+
+{
+  var c = 30;
+}
+console.log(c); // 30
+
+
+Simple explanation:
+
+var does NOT have block scope
+
+Even inside {}, var behaves like it was outside
+
+So c is available globally
+
+🧠 Summary of Block Scope
+Declaration	Block Scope?
+var	❌ No
+let	✅ Yes
+const	✅ Yes
+
+So always use let/const and avoid var unless you need the old behavior.
+
+🟢 3️⃣ What is Shadowing?
+
+Shadowing means: If a variable is defined in BOTH an outer scope and an inner block, the inner one hides (or “shadows”) the outer one inside the block.
+
+Example from the video:
+
+let x = 100;
+
+{
+  let x = 50;
+  console.log(x); // 50
+}
+
+console.log(x);   // 100
+
+
+Simple explanation:
+
+✔ Inside the block, x refers to the inside value 50
+✔ Outside, it still refers to the original value 100
+✔ The inner variable “shadows” the outer only inside the block
+
+🔥 4️⃣ Another Example (Shadowing with var, let and const)
+
+Video example:
+
+let a = 10;
+
+{
+  var a = 20; // ❌ SyntaxError
+}
+
+
+Explanation:
+
+⚠ You CANNOT use var to shadow a let or const variable in the same scope
+So this throws an error
+
+Why? Because let already created a variable in that scope, and var is not allowed to re-declare it.
+
+🟡 5️⃣ Legal Shadowing Cases
+
+✔ You can shadow only when the inner scope uses let or const
+
+Example:
+
+var b = 10;
+
+{
+  let b = 20;
+  console.log(b); // 20
+}
+
+console.log(b); // 10
+
+
+✔ Works fine because outer is var, inner is let — no conflict
+
+🧾 6️⃣ KEY RULES from the video (simple interview lines)
+
+Block scope applies only to let and const
+
+var ignores block scope completely
+
+Shadowing is when a variable in inner scope hides the outer variable
+
+You can shadow outer variables with let or const
+
+You cannot shadow a let/const with a var in the same scope — SyntaxError
+
+🧠 WHY THIS MATTERS
+
+👉 Block scope prevents accidental overwrites
+👉 It helps keep variables local to where you use them
+👉 Shadowing lets inner blocks control their own variables without changing the outer one
+
+📌 One-Liner Interview Answers
+
+🔹 Block scope means let and const are only available inside {} blocks.
+🔹 var does not follow block scope; it’s function or global scoped.
+🔹 Shadowing is when a variable in a child scope hides the same-named variable from an outer scope.
+🔹 You can shadow with let/const, but you can’t use var to shadow a let or const variable.
+
+
+🧠 How GEC + Block Scope Memory Works (let / const)
+
+We already know:
+
+When JS starts, it creates the Global Execution Context (GEC).
+
+Now let’s add the missing part 👇
+
+1️⃣ What GEC Creates (IMPORTANT)
+
+When GEC is created, JS creates TWO main things:
+
+GLOBAL EXECUTION CONTEXT
+|
+|-- Global Object (window)
+|
+|-- Global Lexical Environment
+
+
+Inside Global Lexical Environment, memory is created for variables.
+
+2️⃣ Memory Allocation in Global Lexical Environment
+
+Consider this code:
+
+var a = 10;
+let b = 20;
+const c = 30;
+
+
+During creation phase, memory looks like this:
+
+Global Lexical Environment
+
+a → undefined        (var)
+b → <uninitialized>  (let - TDZ)
+c → <uninitialized>  (const - TDZ)
+
+
+✔ All variables are part of GEC
+❌ But they are stored in different places
+
+3️⃣ Where exactly are var, let, const stored?
+
+This is the key part 👇
+
+🔹 var
+
+Stored in Global Object (window)
+
+Also accessible via lexical environment
+
+window.a // 10
+
+🔹 let and const
+
+Stored in Global Lexical Environment
+
+NOT attached to window
+
+window.b // undefined
+window.c // undefined
+
+
+So memory structure is like:
+
+GLOBAL EXECUTION CONTEXT
+|
+|-- Global Object (window)
+|     |-- a (var)
+|
+|-- Global Lexical Environment
+      |-- b (let)
+      |-- c (const)
+
+4️⃣ What happens when a BLOCK {} is encountered?
+
+Now the new concept 👇
+
+When JS enters a block (like if, for, {}):
+
+{
+  let x = 100;
+  const y = 200;
+}
+
+
+👉 JS creates a SEPARATE MEMORY BLOCK called:
+
+Block Lexical Environment
+
+This is created inside the current execution context.
+
+5️⃣ Block Lexical Environment (VERY IMPORTANT)
+
+Memory now looks like:
+
+GLOBAL EXECUTION CONTEXT
+|
+|-- Global Lexical Environment
+|     |-- a (var)
+|     |-- b (let)
+|
+|-- Block Lexical Environment
+      |-- x (let)
+      |-- y (const)
+
+
+✔ This block memory exists only while block is executing
+✔ After block ends → memory is removed
+
+6️⃣ Why var is NOT stored in block memory?
+
+Example:
+
+{
+  var z = 300;
+}
+console.log(z); // 300
+
+
+Because:
+
+var does NOT respect block scope
+
+JS puts var z into Global Lexical Environment / window
+
+NOT into Block Lexical Environment
+
+So block memory contains only:
+
+let
+const
+
+7️⃣ Block Scope + Scope Chain Together
+
+Example:
+
+let a = 10;
+
+{
+  let b = 20;
+  console.log(a);
+}
+
+
+How JS finds a:
+
+1️⃣ Look in Block Lexical Environment → not found
+2️⃣ Go to Global Lexical Environment → found
+3️⃣ Print 10
+
+This walking up is the Scope Chain.
+
+8️⃣ Block Shadowing with Memory Blocks
+let a = 10;
+
+{
+  let a = 20;
+  console.log(a); // 20
+}
+
+console.log(a); // 10
+
+
+Memory picture:
+
+Global Lexical Env
+|-- a = 10
+
+Block Lexical Env
+|-- a = 20   (shadows global a)
+
+
+Block a hides global a inside block only.
+
+9️⃣ Illegal Shadowing (memory conflict)
+let a = 10;
+
+{
+  var a = 20; // ❌ SyntaxError
+}
+
+
+Why error?
+
+let a already exists in Global Lexical Environment
+
+var a tries to go to global/window
+
+JS prevents this conflict → SyntaxError
+
+🔥 Final Mental Model (DRAW THIS IN INTERVIEW)
+EXECUTION CONTEXT
+|
+|-- Global Object (window)
+|     |-- var variables
+|
+|-- Lexical Environment
+|     |-- let / const
+|
+|-- Block Lexical Environment (created per block)
+      |-- let / const
+
+🧾 One-Line Interview Answer (VERY STRONG)
+
+Inside an execution context, JavaScript creates separate lexical environments.
+Global lexical environment stores global let and const, and every block creates its own lexical environment where block-scoped let and const are stored.

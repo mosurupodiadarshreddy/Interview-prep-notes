@@ -1,0 +1,119 @@
+🧠 Scope, Scope Chain & Lexical Environment (Simple Explanation)
+🟢 1️⃣ What is Scope?
+
+Scope = where in your code a variable can be accessed.
+If a variable is inside a function, only that function and its inner functions can see it.
+If it’s outside any function, it’s global and can be seen everywhere.
+
+Example Akshay used:
+
+function a() {
+  console.log(b);
+}
+var b = 10;
+a();  // prints 10
+
+
+Even though b is declared outside a, function a can still access it.
+That’s because the place where the function is written (not called) decides what variables it can see.
+
+🟢 2️⃣ What is Lexical Environment?
+
+Every time code runs (global code or a function), JavaScript creates a Lexical Environment — a place where variables for that scope are stored.
+
+It has two parts:
+✔ Local variables inside the scope
+✔ A reference to the parent’s environment
+
+So, when a function runs, it gets its own lexical environment.
+
+🟢 3️⃣ What does lexical mean?
+
+The word lexical means written position in the code.
+So lexical environment means the variables that are available based on where the code was defined, not where it was called.
+
+Key sentence from the video in simple words:
+
+The code you write inside a function can access variables from its parent scopes because of how the lexical environment is created.
+
+🟢 4️⃣ What is the Scope Chain?
+
+When JavaScript looks for a variable, it checks:
+
+1️⃣ Current scope
+2️⃣ If not found, go to parent scope
+3️⃣ Keep going up until global
+
+This linked list of scopes is called the scope chain.
+
+So if something isn’t found in the current environment, JavaScript will walk up the scope chain until it finds it or reaches the global scope.
+
+🟢 5️⃣ Examples from the Video (Clear Output)
+Example 1
+function a() {
+  console.log(b);
+}
+var b = 10;
+a(); // 10
+
+
+Reason:
+a was defined in the global scope, so its lexical environment points to global.
+So it finds b from global.
+
+Example 2
+function a() {
+  c();
+  function c() {
+    console.log(b);
+  }
+}
+var b = 10;
+a(); // 10
+
+
+Reason:
+Both a and c functions are defined inside global scope, so their lexical environment ultimately points to global and can access b.
+
+Example 3
+function a() {
+  c();
+  function c() {
+    var b = 100;
+    console.log(b);
+  }
+}
+var b = 10;
+a(); // 100
+
+
+Reason:
+Inside c, there is a local b, so JS finds that first and prints 100 instead of 10.
+
+Example from video about parent link
+c()’s lexical environment points to a()’s lexical environment
+a()’s lexical environment points to global’s lexical environment
+
+
+So the scope chain looks like:
+
+c → a → global
+
+
+If c doesn’t find a variable, it looks in a, then global.
+
+🟢 6️⃣ Scope vs Lexical Environment (Simple Words)
+
+✔ Scope — Where a variable is allowed to be used
+✔ Lexical Environment — Memory/place where variables live during execution
+✔ Scope Chain — The list of lexical environments JS checks to find a variable
+
+🟢 7️⃣ Key Lines You Can Use in Interview (Simple)
+
+✔ “Scope tells where you can access a variable.”
+✔ “Lexical environment is the memory of a scope plus a link to its parent scope.”
+✔ “Scope chain is how JavaScript searches from inner scope up to outer scopes until it finds the variable.”
+
+🟢 8️⃣ Why This Works
+
+Because JS knows where the function was written (its lexical environment), not where it was called, which decides what variables it can see. That’s the core idea the video explains
