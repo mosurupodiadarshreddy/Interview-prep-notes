@@ -1,0 +1,186 @@
+================================================================
+JAVASCRIPT this KEYWORD – PRACTICE QUESTIONS (WITH ANSWERS)
+QUESTION 1
+
+Code:
+
+var x = 10;
+
+function test() {
+console.log(this.x);
+}
+
+test();
+
+My Answer:
+Here this keyword checks who called the test() function. It is called as a normal plain function, so this refers to the window object. Since x is declared using var in global scope, it is attached to window. So this.x is 10.
+
+Output:
+10
+
+Explanation:
+Normal function + plain call → this becomes window.
+window.x exists and equals 10.
+
+QUESTION 2
+
+Code:
+
+var x = 10;
+
+const obj = {
+x: 20,
+test: function () {
+console.log(this.x);
+}
+};
+
+obj.test();
+
+My Answer:
+Here obj.test() means the function is called using the object. So this inside test refers to obj. Therefore this.x is 20.
+
+Output:
+20
+
+Explanation:
+When a function is called using object.function(), this points to that object.
+
+QUESTION 3
+
+Code:
+
+var x = 10;
+
+const obj = {
+x: 20,
+test: function () {
+function inner() {
+console.log(this.x);
+}
+inner();
+}
+};
+
+obj.test();
+
+My Answer:
+Here obj.test() means this inside test is obj.
+But inner() is called as a plain function, not like obj.inner().
+So this inside inner becomes window.
+window.x is 10, so output is 10.
+
+Output:
+10
+
+Explanation:
+Inner function is a normal function and is called without any object.
+So this defaults to window.
+
+QUESTION 4
+
+Code:
+
+var x = 10;
+
+const obj = {
+x: 20,
+test: function () {
+const inner = () => {
+console.log(this.x);
+};
+inner();
+}
+};
+
+obj.test();
+
+My Answer:
+Here obj.test() means this inside test is obj.
+Inner is an arrow function, so it does not have its own this.
+It takes this from where it is written, which is inside test.
+So this still refers to obj and this.x is 20.
+
+Output:
+20
+
+Explanation:
+Arrow functions inherit this from their surrounding function.
+So arrow is useful to keep the same this.
+
+QUESTION 5
+
+Code:
+
+var x = 10;
+
+const obj = {
+x: 20,
+test: function () {
+console.log(this.x);
+}
+};
+
+const ref = obj.test;
+ref();
+
+My Answer (initial):
+20
+
+Correct Output:
+10
+
+Correct Explanation:
+ref = obj.test copies only the function, not the object.
+Now ref() is a plain function call.
+Plain function call → this becomes window.
+window.x is 10, so output is 10.
+
+Key Point:
+this depends on HOW a function is called, not where it came from.
+
+QUESTION 6
+
+Code:
+
+var x = 10;
+
+const obj = {
+x: 20,
+test: () => {
+console.log(this.x);
+}
+};
+
+const ref = obj.test;
+ref();
+
+My Answer:
+10
+
+Explanation:
+test is an arrow function.
+Arrow functions do not create their own this.
+They take this from where they are written.
+This arrow function is written in global scope, so this refers to window.
+window.x is 10, so output is 10.
+
+Important Note:
+Calling the arrow function through object or reference does not matter.
+Arrow function this is fixed at creation time.
+
+FINAL SUMMARY
+
+Normal function → this is decided at call time
+
+Arrow function → this is decided at creation time
+
+Plain function call → this = window
+
+Object method call → this = object
+
+Arrow functions are best for inner functions and callbacks
+
+Arrow functions should not be used as object methods
+
+================================================================

@@ -1,0 +1,486 @@
+🧠 What is this?
+
+this is a special keyword in JavaScript that refers to “who is calling the function.”
+
+It does NOT always refer to the function itself — it depends on how the function is called.
+
+🟢 1️⃣ Global Context (Outside any function)
+console.log(this);
+
+
+✔ In browser → this refers to window object
+✔ So everything attached to global stays under this
+
+Example:
+
+var a = 10;
+console.log(this.a); // 10
+
+
+Because:
+
+this → window  
+window.a → 10
+
+🟡 2️⃣ Inside a Normal Function
+function foo() {
+  console.log(this);
+}
+foo();
+
+
+✔ Here this also refers to global object (window)
+✔ Because function is called normally
+
+So result is:
+
+window object
+
+🔵 3️⃣ Strict Mode ("use strict")
+"use strict";
+function foo() {
+  console.log(this);
+}
+foo();
+
+
+✔ In strict mode, this becomes undefined
+✔ Not window anymore
+
+Why?
+Because strict mode avoids default global binding.
+
+So result:
+
+undefined
+
+🟠 4️⃣ Inside an Object Method
+const obj = {
+  name: "JS",
+  say() {
+    console.log(this);
+  }
+};
+obj.say();
+
+
+✔ Here this refers to the object that called the function
+✔ So this → obj
+
+Output:
+
+{ name: "JS", say: f }
+
+🔥 5️⃣ When One Object Calls Another Object’s Method
+const obj1 = {
+  name: "A",
+};
+
+const obj2 = {
+  name: "B",
+  fun() {
+    console.log(this);
+  }
+};
+
+obj2.fun();   // B
+obj1.fun();   // A
+
+
+✔ this always refers to the object before the dot
+✔ So this depends on where the function is called
+
+🧠 First: ONE GOLDEN RULE (REMEMBER THIS)
+👉 Normal function:
+
+this = who calls the function
+function a(){
+    var b =10;
+    function c(){
+        console.log(this.b);
+    }
+    c();
+}
+a();
+
+so here this keyword in function c so it means it checks who called that that function if it called outside means any how a() called if it called like this means it takes GEC called means window checks b value in that here this in c function it was called by a() so it checks in a() invocation execution context it will get b there so prints .
+
+FIRST: LET ME CORRECT ONE KEY THING IN YOUR UNDERSTANDING (VERY IMPORTANT)
+
+You wrote this 👇 (this is the mistake point):
+
+“this in function c checks who called it. Since a() called c(), it will check inside a() execution context and find b.”
+
+❌ This is NOT how this works
+✅ This is how scope chain works, not this.
+
+So you are mixing scope and this.
+Let’s separate them clearly.
+
+🔑 GOLDEN SEPARATION (REMEMBER THIS)
+🔹 Scope (variables like b)
+
+👉 Decided by where code is written
+
+🔹 this
+
+👉 Decided by how function is called
+
+They are two different systems.
+
+NOW LET’S FIX YOUR FIRST EXAMPLE (STEP BY STEP, YOUR WAY)
+Your code:
+function a() {
+  var b = 10;
+  function c() {
+    console.log(this.b);
+  }
+  c();
+}
+a();
+
+STEP 1️⃣: Who calls c()?
+
+Inside a, you are calling:
+
+c();
+
+
+This is a plain function call.
+
+There is NO dot like:
+
+something.c()
+
+
+So rule applies:
+
+Plain function call → this = global object (window)
+
+✔ NOT a()
+✔ NOT a execution context
+✔ ONLY window
+
+STEP 2️⃣: What is this inside c()?
+this === window
+
+
+So this line becomes:
+
+console.log(window.b);
+
+STEP 3️⃣: Does window.b exist?
+var b = 10; // ❌ NO (this b is inside function a)
+
+
+b is inside function a, not global.
+
+So:
+
+window.b === undefined
+
+✅ FINAL OUTPUT
+undefined
+
+🚨 VERY IMPORTANT CLARIFICATION
+❌ this does NOT look inside caller function memory
+❌ this does NOT care that a() called c()
+
+That is scope, not this.
+
+🔁 NOW COMPARE WITH SCOPE (THIS IS WHERE CONFUSION CAME)
+
+If you wrote this instead 👇
+
+function a() {
+  var b = 10;
+  function c() {
+    console.log(b);
+  }
+  c();
+}
+a();
+
+
+Output:
+
+10
+
+
+Why?
+
+Because:
+
+b is a variable
+
+Variables use scope chain
+
+c looks inside a → finds b
+
+👉 NO this involved here
+
+🧠 SIMPLE LINE (MEMORISE)
+
+this.b ❌ is NOT same as b
+
+🧪 START FROM SOMETHING YOU ALREADY UNDERSTAND
+✅ Normal function inside object (you already get this)
+const user = {
+  name: "Adarsh",
+  showName: function () {
+    console.log(this.name);
+  }
+};
+
+user.showName(); // Adarsh
+
+
+✔ showName is called using user.
+✔ So this = user
+✔ Output is correct
+
+🔥 NOW THE SAME THING WITH ARROW (CONFUSION STARTS)
+const user = {
+  name: "Adarsh",
+  showName: () => {
+    console.log(this.name);
+  }
+};
+
+user.showName(); // ❌ undefined
+
+❓ Why NOT "Adarsh"?
+
+Because:
+
+🚨 Arrow function does NOT care who calls it
+🚨 It looks outside, not at user
+
+🧠 Where is this arrow function written?
+
+It is written outside any function, at global level.
+
+So arrow says:
+
+"My this = global this"
+
+
+In browser:
+
+global this = window
+
+
+Now check:
+
+window.name // undefined
+
+
+So:
+
+this.name // undefined
+
+
+✅ That’s why output is undefined
+
+🧾 SIMPLE LINE TO REMEMBER
+
+Arrow function ignores the object. It takes this from outside.
+
+🧪 REAL LIFE EXAMPLE (THIS WILL CLICK 💡)
+🎯 Example: Button click (real app case)
+❌ Wrong way (arrow function)
+button.addEventListener("click", () => {
+  console.log(this);
+});
+
+
+👉 You expect this = button
+👉 But arrow says: “I don’t care who clicked me”
+
+So:
+
+this = window
+
+✅ Correct way (normal function)
+button.addEventListener("click", function () {
+  console.log(this);
+});
+
+
+Now:
+
+this = button
+
+
+✔ This is why event handlers should NOT use arrow functions
+
+🔁 NOW YOUR CONFUSION POINT: CASE 10 (NESTED FUNCTION)
+❌ Problem Case (Normal function inside method)
+const user = {
+  name: "Adarsh",
+  show() {
+    function inner() {
+      console.log(this.name);
+    }
+    inner();
+  }
+};
+
+user.show(); // ❌ undefined
+
+❓ Why undefined?
+
+Step by step:
+
+1️⃣ show() → called by user → OK
+2️⃣ BUT inner() is called normally, NOT as user.inner()
+
+So:
+
+inner() → normal function call
+this → window
+window.name → undefined
+
+
+🔁 NOW COMPARE WITH SCOPE (THIS IS WHERE CONFUSION CAME)
+
+If you wrote this instead 👇
+
+function a() {
+  var b = 10;
+  function c() {
+    console.log(b);
+  }
+  c();
+}
+a();
+
+
+Output:
+
+10
+
+
+Why?
+
+Because:
+
+b is a variable
+
+Variables use scope chain
+
+c looks inside a → finds b
+
+👉 NO this involved here
+
+🧠 SIMPLE LINE (MEMORISE)
+
+this.b ❌ is NOT same as b
+
+NOW YOUR MAIN CONFUSION: WHY ARROW WORKS BUT NORMAL DOES NOT
+
+Let’s fix that slowly.
+
+❌ NORMAL INNER FUNCTION (PROBLEM)
+const user = {
+  name: "Adarsh",
+  show() {
+    function inner() {
+      console.log(this.name);
+    }
+    inner();
+  }
+};
+
+user.show();
+
+Step-by-step (VERY IMPORTANT):
+
+1️⃣ show() is called like:
+
+user.show()
+
+
+✔ So this inside show = user
+
+2️⃣ But inner() is called like:
+
+inner()
+
+
+❌ No dot
+❌ Plain function call
+
+So:
+
+this === window
+
+
+Then:
+
+window.name // undefined
+
+
+✅ Output: undefined
+
+🔑 KEY REALIZATION (THIS WILL CLICK)
+
+inner() is NOT called as user.inner()
+So this does NOT become user
+
+✅ ARROW FUNCTION VERSION (WHY IT WORKS)
+const user = {
+  name: "Adarsh",
+  show() {
+    const inner = () => {
+      console.log(this.name);
+    };
+    inner();
+  }
+};
+
+user.show();
+
+Step-by-step:
+
+1️⃣ show() is called as:
+
+user.show()
+
+
+✔ this inside show = user
+
+2️⃣ Arrow function:
+
+() => { ... }
+
+
+🚫 DOES NOT create its own this
+
+So arrow says:
+
+“I will use this from where I am written”
+
+Where is it written?
+👉 inside show()
+
+So:
+
+this === user
+
+
+Then:
+
+this.name → user.name → "Adarsh"
+
+
+✅ Output correct
+
+🔥 MOST IMPORTANT LINE (WRITE THIS IN YOUR BRAIN)
+❌ Normal function:
+
+“Who called me?”
+
+✅ Arrow function:
+
+“Where was I written?”
