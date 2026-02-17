@@ -1,0 +1,273 @@
+1️⃣ JS engine execution: GEC, Call Stack, function invocation & pop
+Example Akshay uses (simple form)
+function a() {
+  console.log("a");
+}
+
+a();
+console.log("end");
+Step-by-step execution
+
+JS engine starts → Global Execution Context (GEC) is created
+
+GEC is pushed into Call Stack
+
+Call Stack:
+
+| GEC |
+
+When a() is called:
+
+New Function Execution Context (FEC) for a is created
+
+It is pushed on top of stack
+
+Call Stack:
+
+| a() |
+| GEC |
+
+console.log("a") runs
+
+Function a() finishes → its execution context is popped
+
+Call Stack:
+
+| GEC |
+
+console.log("end") runs
+
+Global code finishes → GEC is popped
+
+Call stack becomes empty
+
+📌 Important rule
+
+Call Stack works in LIFO (Last In, First Out)
+
+2️⃣ Superpowers of Browser (Web APIs)
+
+JS alone is very small.
+Browser gives extra powers called Web APIs.
+
+Some browser superpowers:
+
+DOM APIs (document.getElementById)
+
+setTimeout
+
+fetch
+
+console.log
+
+Event listeners (click, keypress)
+
+LocalStorage
+
+Geolocation
+
+JS engine cannot do these alone.
+
+Browser provides them.
+
+3️⃣ Why setTimeout, DOM, console are NOT part of JS?
+Important truth Akshay says:
+
+JavaScript does NOT have timers, DOM, or console.
+
+These belong to browser, not JS.
+
+Then why we can write this?
+setTimeout(...)
+console.log(...)
+document.getElementById(...)
+Answer:
+
+Browser wraps these features and exposes them through:
+
+window
+
+So internally:
+
+window.setTimeout
+window.console.log
+window.document
+
+That’s why:
+
+In browser → works
+
+In Node.js → DOM doesn’t exist
+
+📌 JS engine only understands
+
+Call stack
+
+Heap
+
+Execution contexts
+
+Everything else = browser help.
+
+4️⃣ Callback Registry, Event Loop & Callback Queue
+Example
+console.log("start");
+
+setTimeout(function cb() {
+  console.log("timer");
+}, 5000);
+
+console.log("end");
+Execution flow
+
+GEC pushed
+
+"start" printed
+
+setTimeout is sent to Web API environment
+
+Timer starts (5 seconds)
+
+Callback cb is registered
+
+"end" printed
+
+Call stack is now empty
+
+After 5 seconds:
+
+Browser puts cb into Callback Queue
+
+5️⃣ Event Loop & Event Listener example
+Click example
+document.getElementById("btn")
+  .addEventListener("click", function cb() {
+    console.log("clicked");
+  });
+What happens?
+
+JS registers the callback cb with browser
+
+Browser keeps listening for click
+
+When user clicks:
+
+Browser puts cb into Callback Queue
+
+Event Loop checks:
+
+Is Call Stack empty?
+
+If YES → push callback to stack
+
+Callback executes
+
+📌 Main job of Event Loop
+
+Constantly check:
+
+Is call stack empty?
+
+Is something waiting in queue?
+
+If yes → push it to stack
+
+6️⃣ Why do we need Callback Queue?
+
+Because:
+
+JS is single-threaded
+
+Only one thing can run at a time
+
+Callback Queue:
+
+Stores callbacks
+
+Maintains order
+
+Prevents browser from interrupting running JS
+
+Without queue:
+
+Async callbacks would crash JS execution order
+
+7️⃣ Fetch, Promises, Microtask Queue & Callback Queue
+Fetch example
+fetch("api/url")
+  .then(function cb() {
+    console.log("data");
+  });
+Important difference Akshay explains
+
+Browser has two queues:
+
+Microtask Queue
+
+Promises (then, catch)
+
+MutationObserver
+
+Callback Queue
+
+setTimeout
+
+DOM events
+
+Priority rule:
+
+Microtask Queue has higher priority than Callback Queue
+
+Execution order:
+
+Call Stack
+↓
+Microtask Queue (FIRST)
+↓
+Callback Queue (LATER)
+Example
+setTimeout(() => console.log("timeout"), 0);
+
+Promise.resolve().then(() => console.log("promise"));
+
+Output:
+
+promise
+timeout
+
+Because:
+
+Promise callback goes to Microtask Queue
+
+setTimeout goes to Callback Queue
+
+Are promises callbacks?
+
+✔ Yes, internally they use callback functions
+❌ But they go to Microtask Queue, not Callback Queue
+
+8️⃣ Starvation of Callback Queue
+What is starvation?
+
+If Microtask Queue never becomes empty,
+Callback Queue callbacks never get a chance.
+
+Example
+function recurse() {
+  Promise.resolve().then(recurse);
+}
+recurse();
+
+What happens?
+
+Microtask Queue keeps filling
+
+Event loop keeps executing microtasks
+
+Callback Queue is ignored
+
+This is called:
+
+Starvation of Callback Queue
+
+Timers & events get delayed.

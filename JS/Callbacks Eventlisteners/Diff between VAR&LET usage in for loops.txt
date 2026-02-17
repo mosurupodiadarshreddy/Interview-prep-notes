@@ -1,0 +1,231 @@
+This is THE classic closure + scope + async question, and I’ll explain it very slowly, very clearly, line by line, exactly how memory works for var and then let.
+
+No shortcuts. No fancy words.
+
+THE CODE (VAR VERSION)
+for (var i = 1; i <= 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, i * 1000);
+}
+PART 1: HOW var WORKS (WHY OUTPUT IS 4, 4, 4)
+✅ Final Output
+4
+4
+4
+
+Now let’s see WHY, step by step.
+
+STEP 1️⃣: GLOBAL EXECUTION CONTEXT (GEC) IS CREATED
+
+When JS starts, Global Execution Context (GEC) is created.
+
+Memory (Creation Phase):
+
+GEC Memory:
+i → undefined   (because var)
+
+👉 Important:
+
+var i is global
+
+It lives in GEC
+
+It is also attached to window
+
+STEP 2️⃣: EXECUTION PHASE STARTS
+
+Now the for loop starts running.
+
+First loop:
+i = 1
+
+JS executes:
+
+setTimeout(function () {
+  console.log(i);
+}, 1000);
+
+Important:
+
+setTimeout does NOT run the function now
+
+It only registers the callback
+
+The callback remembers variable i (closure)
+
+⚠️ But remember:
+👉 It remembers the variable, not the value
+
+So memory is still:
+
+GEC Memory:
+i = 1
+Second loop:
+i = 2
+
+Another setTimeout is registered.
+
+Memory now:
+
+GEC Memory:
+i = 2
+
+Both callbacks still point to the same i.
+
+Third loop:
+i = 3
+
+Another callback registered.
+
+Memory:
+
+GEC Memory:
+i = 3
+STEP 3️⃣: LOOP ENDS
+
+After loop condition fails:
+
+i++ → i = 4
+
+Final memory:
+
+GEC Memory:
+i = 4
+
+⚠️ Very important:
+
+Loop finished before any setTimeout runs
+
+Only ONE i exists
+
+All callbacks share this same i
+
+STEP 4️⃣: TIMER CALLBACKS EXECUTE
+
+After 1s, 2s, 3s → callbacks start running.
+
+Each callback does:
+
+console.log(i);
+
+Where does JS look for i?
+
+In closure → points to GEC i
+
+Current value of i is 4
+
+So output:
+
+4
+4
+4
+🔑 KEY LINE (VAR)
+
+With var, only one i exists in GEC, and all callbacks share it.
+
+PART 2: HOW let WORKS (WHY OUTPUT IS 1, 2, 3)
+
+Now the same code with let.
+
+for (let i = 1; i <= 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, i * 1000);
+}
+✅ Final Output
+1
+2
+3
+
+Now let’s see WHY.
+
+STEP 1️⃣: GEC IS CREATED (LET VERSION)
+
+Memory in GEC:
+
+GEC Memory:
+(no i here)
+
+👉 Important:
+
+let i is NOT stored in GEC
+
+It is block scoped
+
+STEP 2️⃣: LOOP STARTS – BLOCK SCOPE CREATED
+
+Each iteration of the loop creates a NEW BLOCK SCOPE.
+
+First iteration (i = 1)
+
+Memory:
+
+Block Scope #1:
+i = 1
+
+setTimeout callback is created.
+It closes over this block’s i.
+
+Second iteration (i = 2)
+
+New block scope:
+
+Block Scope #2:
+i = 2
+
+New callback → closes over this i
+
+Third iteration (i = 3)
+
+New block scope:
+
+Block Scope #3:
+i = 3
+
+New callback → closes over this i
+
+STEP 3️⃣: LOOP ENDS
+
+Each iteration had:
+
+Its own block
+
+Its own i
+
+Its own closure
+
+No shared memory.
+
+STEP 4️⃣: CALLBACKS EXECUTE
+
+Each callback prints the i from its own block scope.
+
+So outputs are:
+
+1
+2
+3
+🔑 KEY LINE (LET)
+
+With let, each loop iteration gets a new block scope, so each callback gets its own copy of i.
+
+VAR vs LET — SIDE BY SIDE (VERY IMPORTANT)
+| Feature                 | `var`             | `let`       |
+| ----------------------- | ----------------- | ----------- |
+| Scope                   | Global / Function | Block       |
+| Where `i` stored        | GEC               | Block scope |
+| Number of `i` variables | 1                 | 3           |
+| Closures share memory   | Yes               | No          |
+| Output                  | 4 4 4             | 1 2 3       |
+
+SIMPLE INTERVIEW SENTENCE (MEMORISE THIS)
+
+With var, all callbacks share the same variable, so they print the final value.
+With let, each loop iteration creates a new block-scoped variable, so callbacks print different values.
+
+ONE MORE SUPER-SIMPLE WAY TO REMEMBER
+
+var → one house, everyone uses same room
+
+let → new room for every loop

@@ -1,0 +1,161 @@
+========================================================
+1️⃣ this + normal vs arrow function (MOST ASKED)
+Code
+var x = 10;
+
+const obj = {
+  x: 20,
+  test: function () {
+    function inner() {
+      console.log(this.x);
+    }
+    inner();
+  }
+};
+
+obj.test();
+Output
+10
+Explanation
+
+obj.test() → this inside test is obj
+
+inner() is a plain function call
+
+Plain function → this becomes window
+
+window.x = 10
+
+========================================================
+2️⃣ Fix the above using arrow function
+Code
+var x = 10;
+
+const obj = {
+  x: 20,
+  test: function () {
+    const inner = () => {
+      console.log(this.x);
+    };
+    inner();
+  }
+};
+
+obj.test();
+Output
+20
+Explanation
+
+Arrow function does not create its own this
+
+It takes this from test()
+
+test() was called by obj
+
+So this = obj
+
+========================================================
+3️⃣ Closure with setTimeout (VERY COMMON)
+Code
+function test() {
+  var a = 10;
+
+  setTimeout(function () {
+    console.log(a);
+  }, 1000);
+}
+
+test();
+Output
+10
+Explanation
+
+setTimeout callback runs later
+
+Callback remembers a
+
+This memory is called closure
+
+Even after test() finishes, a is preserved
+
+========================================================
+4️⃣ var vs let inside loop with setTimeout
+Code
+for (var i = 1; i <= 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, i * 1000);
+}
+Output
+4
+4
+4
+Explanation
+
+var is function scoped
+
+All callbacks share same i
+
+Loop finishes first → i = 4
+
+All callbacks print 4
+
+✅ Fixed Version (using let)
+for (let i = 1; i <= 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, i * 1000);
+}
+Output
+1
+2
+3
+Explanation
+
+let is block scoped
+
+Each loop creates a new copy of i
+
+========================================================
+5️⃣ Function reference vs function call (TRAP)
+Code
+function greet() {
+  console.log("Hello");
+}
+
+setTimeout(greet(), 1000);
+Output
+Hello
+
+(and then error / nothing after)
+
+Explanation
+
+greet() is called immediately
+
+Its return value is passed to setTimeout
+
+This is wrong usage
+
+✅ Correct Version
+setTimeout(greet, 1000);
+Output
+Hello   (after 1 second)
+Explanation
+
+We pass function reference
+
+setTimeout calls it later
+
+========================================================
+FINAL INTERVIEW QUICK LINES
+
+this depends on how function is called
+
+Arrow functions take this from outer scope
+
+Closures allow functions to remember variables
+
+var causes shared memory in async code
+
+Always pass function reference, not execution

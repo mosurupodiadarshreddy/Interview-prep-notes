@@ -1,0 +1,191 @@
+📌 CALLBACK FUNCTIONS — SIMPLE CLEAR EXPLANATION
+👉 What is a callback function?
+
+A callback is a function you pass as an argument to another function so that the other function can call it later.
+
+You can think of it as:
+
+“I’ll give you a function — you run it when your work is done.”
+
+function sayHi() {
+  console.log("Hi");
+}
+
+function greet(callback) {
+  callback();  // calling the passed function
+}
+
+greet(sayHi);  // sayHi is a callback
+
+Here sayHi doesn’t run immediately — it runs when greet calls it.
+
+📍 WHY USE CALLBACKS?
+
+JavaScript runs code line-by-line → you sometimes want to run a function later, after a task finishes.
+
+Examples:
+
+after clicking a button
+
+after waiting some time
+
+after fetching data
+Callbacks help with that.
+
+📌 EVENT LISTENERS (DOM & CALLBACKS)
+👉 What is an event listener?
+
+When a user interacts with the page (click, key press, mouse move, form submit), you use addEventListener() to run a function when that event happens.
+
+The function you pass is a callback function.
+
+Example that he likely showed:
+
+<button id="btn">Click me</button>
+<script>
+  const btn = document.getElementById("btn");
+
+  btn.addEventListener("click", function () {
+    console.log("Button was clicked");
+  });
+</script>
+
+Here the function inside addEventListener() is a callback — it runs when the user clicks.
+
+Important rule he emphasizes:
+🛑 Do NOT call the callback immediately — you pass the function reference, no () when passing.
+
+❌ Wrong:
+
+btn.addEventListener("click", showMessage()); // This runs immediately
+
+Correct:
+
+btn.addEventListener("click", showMessage);  // This runs only when clicked
+📌 CALLBACK WITH setTimeout() (ASYNC example)
+
+Another example he shows:
+
+setTimeout(function () {
+  console.log("Hello after 2 seconds");
+}, 2000);
+
+Here:
+
+first argument is the callback
+
+second argument is delay in ms
+
+This callback runs after 2 seconds — not immediately.
+
+📌 CALLBACK FUNCTIONS + CLOSURES (VERY IMPORTANT)
+
+Akshay explains that when you use callbacks inside functions that refer to variables outside them (like inside loops or event listeners), you are using closure.
+
+A closure is when a function remembers the variables where it was created even if that scope has finished execution.
+
+Example with closure inside an event listener:
+
+<button id="btn1">Btn 1</button>
+<script>
+  let count = 0;
+
+  btn1.addEventListener("click", function () {
+    count++;
+    console.log("Clicked " + count + " times");
+  });
+</script>
+
+Here the callback uses count. When the click happens later, the function still remembers count. This memory of outer variables is closure.
+
+📍 CALLBACK HELPS WHEN…
+
+You want to run code after something happens
+
+click, timer, data load
+
+You want to write flexible functions
+
+function can accept different behaviors
+
+Example:
+
+function calculate(a, b, operation) {
+  console.log(operation(a, b));
+}
+
+calculate(5, 3, function (x, y) {
+  return x + y;
+});
+
+Here the callback decides what to do with a and b.
+
+📌 CALLBACK + CLOSURE WITH EVENT LISTENER
+
+Akshay uses the event listener example to show closure in real life:
+
+<button id="btn">Click me</button>
+<script>
+  let i = 0;
+
+  btn.addEventListener("click", function () {
+    i = i + 1;
+    console.log("Clicked " + i);
+  });
+</script>
+
+Explanation:
+
+The callback function is created with access to i
+
+Every click increases i, and the function remembers i
+
+This remembering is closure — even after the outer code finishes
+
+🔑 TYPICAL CALLBACK MARCROS
+Synchronous callback
+
+Runs immediately.
+
+function callNow(fn) {
+  fn();
+}
+Asynchronous callback
+
+Runs later (timer, event, network).
+
+setTimeout(fn, 1000)
+btn.addEventListener("click", fn)
+
+In both, you pass a function, not execute it immediately.
+
+📌 COMMON INTERVIEW POINTS (from the video)
+
+✔ A callback is a function passed to another function as a parameter.
+✔ In event listeners, the callback runs only when the event occurs.
+✔ You must pass the function reference, not call it.
+✔ Callbacks work with both synchronous and asynchronous tasks.
+✔ When the callback accesses outer variables, that is closure.
+
+📌 AGES LONG CONFUSION – CALLBACK HELL
+
+He likely mentions that nested callbacks (like setTimeout inside another setTimeout) can get messy — this is called callback hell — and modern JS uses Promises / async-await instead.
+
+SIMPLE CONSOLIDATED NOTES YOU CAN SAVE
+
+⚡ Callback:
+
+function passed as argument to another function
+
+executed later by the outer function
+
+used in event listeners, timers, async tasks
+
+⚡ Event Listener:
+
+btn.addEventListener("click", callback);
+
+callback runs only when click happens.
+
+⚡ Closure with callbacks:
+When a callback uses a variable from outside function, it retains access through closure.
