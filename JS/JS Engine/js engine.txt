@@ -1,0 +1,36 @@
+1)JS runtime env :
+to run any piece of code definetly need js engine in js env and it have API to connect to outer env end eventloop and microtaskqueue callback queue this all the things need to to run code it all present in js env 
+
+every browser have js env and node.js also have js env in it and node.js can run js code outside browser 
+
+so here the api;s inside node js is different compare to the api's in browser like some are same like settimeout like that remaining are different 
+
+2)list of js engines :
+all browsers have their own js engines microsoft has chakra , firefox have spidermonker google chrome has v8 and node.js also have same v8 js engine and we can create our own js as well js engine follows ECMA script standards , 
+
+brendon eich person created js and js engine it is called spider monkey 
+
+
+3)js engine architecture :
+js engine is not a machine it is env or normal program written in lowlevel code bytecode 
+
+js engine takes code as input what we wrote it goes in 3 levels they are (parsing compilation and execution major things happens in js engine , 
+
+PARSING : in this phase code was broken in to tokens example : let a= 7 this is broken in to tokens as let as one token and a as one token and = as one token and 7 as one token 
+and there is one more like syntax parser its job is basically takes the code and converts it to the AST (abstract syntax tree) 
+
+COMPILATION:: the AST which parsed passed to the compilation and in compilation , js have something called as JIT compilation (just in time compilation) before we understand JIT will see what is interpreter and compilation and js is either interpreter or compiler language 
+
+INTERPRETER:  in many interpreted programming languages code is executed by interpreter this interpreter take code and executes line by line in order and it does not know what happens in next line while on other hand many languages uses compiler to compile their code and in compilation the compiler first compiles whole code sand forms new optimized version of that code then it is executed which runs very fast , so in interpreter code is veryfast in execution in compiler we have more efficiency and in interpreter execution was fast 
+
+so previous js used interpreted language and todays world most browsers and js env uses both interpreter and compiler 
+
+so using both interpreter or compiler based on need or both both mixed called as the JIT compilation 
+
+
+--- so now this compilation and execution goes hand in hand after parsing code we got AST this AST goes to the interpreter and now interpreter converts our high level code to the byte code and moves to the execution step and while it is doing so it takes the help of the compiler to optimize the code so compiler basically talks to the interpreter and compiler tries to optimize the code as much as it can it is not just  one phase it can happen in multiple phases thats why it called JIT compilation 
+
+
+and EXECUTION ::: it will happen only by the two major things callstack and memory heap and callstack present in the js engine this all things present in js engine and now here we also have memory heap 
+
+MEMORY HEAP :: memory heap is the place where all variables and functions assigned memory 
