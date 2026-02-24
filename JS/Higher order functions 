@@ -1,0 +1,130 @@
+Higher order Function ::::
+
+- A function which takes another function as a argument or returns a function is known as higher order function 
+
+example :: 
+function x() {
+	console.log("namaste");
+}
+function y(x){
+	x();
+}
+
+-so here y is a higher order function it takes x as a argument and what is x then x becomes the call back function synchronous callback function because it is dependent on y function to call its invocation until we wont call it wont execute 
+
+so now want to write program for the calculatearea and calculatecircumference and calculatediameter how we actually write 
+
+example::: 
+*****const radius = [1,2,3,4];
+
+const calculatearea = function (radius){
+	const output = [];
+	for (let i=0;i<radius.length;i++){
+	output.push(Math.PI*radius[i]*radius[i]);
+	}
+	return output;
+};
+
+console.log(calculatearea(radius));
+
+const calculatecircumference = function (radius){
+	const output = [];
+	for (let i=0;i<radius.length;i++){
+	output.push(2*Math.PI*radius[i]);
+	}
+	return output;
+};
+
+console.log(calculatecircumference(radius));
+
+const calculatediameter = function (radius){
+	const output = [];
+	for (let i=0;i<radius.length;i++){
+	output.push(2*radius[i]);
+	}
+	return output;
+};
+
+console.log(calculatediameter(radius)); *****
+
+so now before learning about the problem will see what is the function expression and why we called like that 
+((((( Key Differences:
+Hoisting: Function declarations (normal functions) are moved to the top of their scope, allowing invocation before declaration. Function expressions are not hoisted, resulting in a ReferenceError if called prematurely.
+Definition Syntax:
+Normal (Declaration): function greet() { ... }.
+Expression: const greet = function() { ... }; or const greet = () => { ... };.
+Execution Timing: Normal functions are loaded before any code executes. Function expressions are loaded only when the interpreter reaches that line.
+Usage: Normal functions are ideal for global scope functions, while expressions are better for closures, callbacks, or passing functions as arguments. 
+Reddit
+Reddit
+ +6
+Example:
+javascript
+// Function Declaration (Works)
+sayHello();
+function sayHello() { console.log("Hello!"); }
+
+// Function Expression (Errors)
+sayHi(); // TypeError: sayHi is not a function
+var sayHi = function() { console.log("Hi!"); };   )))))
+
+
+-- so now in above example calculatcircumference calculatearea and calculatediameter example what is the problem so in future if something want to calculate means we will one more function its not good practice right 
+-- so we should writhe reusable code not like this 
+
+++++++  const radius = [1,2,3,4];
+
+const area = function(radius){
+	return Math.PI*radius*radius;
+}
+
+const diameter = function(radius){
+	return 2*radius;
+}
+
+const circumference = function(radius){
+	return 2*Math.PI*radius;
+}
+
+const calculate = function (radius,logic){
+ const output = [];
+ for (let i=0;i<radius.length;i++){
+	output.push(logic(radius[i]));
+ }
+ }
+
+const calculate(radius,area);
+const calculate(radius,diameter);
+const calculate(radius,circumference);
+
+-- this is functional programming and why this is good 
+--re-usability, modularity, and we say calculate is the higher order function and function area diameter and circumferenceare callback functions passed after sometime
+-- this is exactly doing what map() will do 
+
+const calculate = function (radius,logic){
+ const output = [];
+ for (let i=0;i<radius.length;i++){
+	output.push(logic(radius[i]));
+ }
+ }
+ 
+ so we can do directly like this 
+ 
+      radius.map(area);
+	  
+	  so this map function maps whole array with some logic 
+	  
+	  console.log(radius.map(area));
+	  
+	  so we kind of wrote or Implementation of map 
+	  
+	  so nothing difference for both 
+	  
+	  radius.map(area); and calculatearea(radius,area);
+	  
+	  
+-- if u have time please learn about array.protocol.calculate also 
+-- this class is small part of functional programming 
+
+
+
