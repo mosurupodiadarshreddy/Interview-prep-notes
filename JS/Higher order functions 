@@ -121,7 +121,85 @@ const calculate = function (radius,logic){
 	  so nothing difference for both 
 	  
 	  radius.map(area); and calculatearea(radius,area);
-	  
+
+
+---------------------🔹 Higher-Order Function
+A higher-order function is a function that either:
+
+Takes another function as an argument, or
+
+Returns another function.
+
+👉 In your code, area is not a higher-order function. It’s just a regular function that takes an array and returns a new array of computed values.
+If you had used something like map, filter, or reduce, those would be higher-order functions because they accept other functions as arguments.
+
+Example:
+
+js
+const arr = [1,2,3,4,5];
+const area = arr.map(r => Math.PI * r * r); 
+Here, map is the higher-order function because it takes a function (r => Math.PI * r * r) as input.
+
+🔹 Passed Function vs. Called Function
+Passed function: When you give a function as an argument to another function, without executing it.
+Example:
+
+js
+setTimeout(myFunc, 1000); // passing myFunc
+Here, myFunc is passed, not executed immediately.
+
+Called function: When you actually invoke/execute the function with parentheses.
+Example:
+
+js
+setTimeout(myFunc(), 1000); // calling myFunc immediately
+This runs myFunc right away and passes its return value to setTimeout.
+
+In your code:
+
+js
+let area = function area1(arr){
+    let output = [];
+    for(let i=0;i<arr.length;i++){
+        output.push(Math.PI*arr[i]*arr[i]);
+    }
+    return output;
+}
+🔹 What is area1?
+area1 is the name of the function (a named function expression).
+
+You assigned that function to the variable area.
+
+So you can call it using area(arr).
+
+🔹 Named Function Expression vs Anonymous Function Expression
+Named function expression:
+
+js
+let f = function myFunc() { ... }
+Here, myFunc is the internal name of the function. It’s useful for debugging (stack traces show myFunc) and recursion (the function can call itself by name inside its body).
+
+Anonymous function expression:
+
+js
+let f = function() { ... }
+No internal name — only accessible via the variable f.
+
+🔹 In Your Case
+area1 is the internal name of the function.
+
+area is the variable holding that function.
+
+You call it with area(arr).
+
+If you tried area1(arr) outside of that definition, it would throw an error because area1 only exists inside the function itself (not in the outer scope).
+
+So:
+
+area → the variable you use to call the function.
+
+area1 → the function’s internal name (mainly for debugging or recursion).
+-----------------------------------------------------	  
 	  
 -- if u have time please learn about array.protocol.calculate also 
 -- this class is small part of functional programming 
