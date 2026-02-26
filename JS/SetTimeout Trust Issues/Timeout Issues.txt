@@ -1,0 +1,59 @@
+setTimeout(function () {
+console.log("hi");
+},5000)
+
+here we cannot sya that it wont print hi message exactly after 5 sec it may print after 10 or 30 sec and may be be after 1 min also cannot say it all depends on the callstack so we have trust issue whats the reason we will see it 
+
+
+here 
+console.log("start");
+
+setTimeout(function cb(){
+console.log("callback")
+},5000);
+
+console.log("end");
+
+...... millions lines of code ......
+
+so now in above example in console first start is printed and next function cb registered in the webapi'env and started timer and next end msg printed and what if there is code million lines below end msg and it is executing till 20sec so call stack is not empty and cb waiting in callbackqueue and eventloop waiting to push it so ... 
+
+
+example for trust issue : 
+
+console.log("start");
+
+setTimeout(() => {console.log("cb");},5000);
+
+console.log("end");
+
+const startdate = new Date().getTime(); for example (6:56:10 seconds think)
+const enddate = startdate; (so now enddate = 6:56:10 sec)
+
+while (enddate < startdate + 10000) {   (//here startdate = 6:56:20 seconds and endate = 6:56:10 seconds so while condition is ture it executes until condition fails) 
+
+enddate = new Date().getTime(); (here endadte may become 6:56:11 seconds ) 
+
+ }
+
+console.log("while expires");
+
+
+this while executes until enddate becomes (6:56:10 seconds ) so it will takes for 10 seconds to get out from while loop so till that time cd msg waiting to print in the callback queue so after 10 sec callstack gets empty and it will print 
+
+
+
+console.log("start")
+function cd() {
+console.log("callback");
+}
+
+setTimeout(cb,0);
+
+console.log("end");
+
+simple example : expected out guess :
+
+start
+end
+callback

@@ -1,0 +1,113 @@
+functions working in js and how function invocation behaves behind the scenes::
+
+
+example : 
+var x=1;
+a();
+b();     // so here we can invoke this functions before even initializing them because of hoisting
+
+console.log(x);
+function a(){
+	var x=10;
+	console.log(x);
+}
+
+function b(){
+	var x=100;
+	console.log(x);	
+}
+
+output::: 10,100,1
+
+explanation ::: 🧠 Core Concepts Used Here
+
+Hoisting
+
+Execution Context
+
+Function Scope
+
+Shadowing
+
+🔹 Phase 1: Memory Creation (Hoisting Phase)
+
+Before any line runs, JavaScript scans the code and allocates memory.
+
+What gets stored in memory:
+Global Execution Context (Memory Phase)
+
+x → undefined
+a → function a() { ... }
+b → function b() { ... }
+
+📌 Important:
+
+var x is hoisted and set to undefined
+
+Function declarations (a, b) are hoisted with their full function body
+
+That’s why:
+
+a();
+b();
+
+works even though functions are written later.
+
+🔹 Phase 2: Execution Phase (Line by Line)
+▶️ Line 1
+var x = 1;
+
+Global x becomes:
+
+x = 1
+▶️ Line 2: a();
+
+A new execution context is created for function a.
+Inside a():
+var x = 10;
+console.log(x);
+Local x is created (function scope)
+This x shadows the global x
+console.log(x) prints:
+10
+
+Then function a() finishes and its execution context is removed.
+
+▶️ Line 3: b();
+
+New execution context for function b.
+
+Inside b():
+var x = 100;
+console.log(x);
+Local x again shadows global x
+Prints:
+
+100
+Execution context destroyed.
+▶️ Line 4
+console.log(x);
+
+Which x?
+No local function scope now
+Looks in global scope
+Global x is still:
+
+1
+
+So it prints:
+
+1
+📦 Scope Chain (Visual)
+b() EC → x = 100
+        ↓
+Global EC → x = 1
+
+a() EC → x = 10
+        ↓
+Global EC → x = 1
+
+Each function has its own private x.
+
+-- every execution context maintains its own separate space even execution created by function or it is a global execution phase they have their own memory phase
+

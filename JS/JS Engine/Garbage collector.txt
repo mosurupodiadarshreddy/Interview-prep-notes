@@ -1,0 +1,174 @@
+🗑️ Garbage Collector (GC) in JavaScript — with clear examples
+
+Garbage Collector is a background process in the JavaScript engine that automatically frees memory by removing objects that are no longer reachable from your program.
+
+👉 You don’t delete memory manually in JS.
+👉 GC decides when an object is dead and cleans it up.
+
+🧠 Core Rule (Most Important)
+
+If an object is unreachable, it is garbage.
+
+“Reachable” means:
+
+Accessible from the root (global scope, current stack, closures, etc.)
+
+Or referenced by something that is reachable
+
+1️⃣ Simple Example: Object Becomes Garbage
+let user = { name: "Adarsh" };
+user = null;
+What happens?
+Before:
+STACK → user ─────► HEAP → { name: "Adarsh" }
+
+After:
+STACK → user → null
+HEAP → { name: "Adarsh" } ❌ unreachable
+
+✅ GC removes { name: "Adarsh" }
+✅ Memory is freed
+
+2️⃣ Reachable vs Unreachable Example
+let a = { value: 10 };
+let b = a;
+
+a = null;
+Memory state
+STACK:
+a → null
+b → 0x101
+
+HEAP:
+0x101 → { value: 10 } ✅ reachable
+
+❗ Object is NOT garbage because b still references it.
+
+3️⃣ Garbage Collection Algorithm (Mark & Sweep)
+
+Modern JS engines (like V8) use Mark-and-Sweep.
+
+🔁 How it works
+
+Mark all reachable objects starting from roots
+
+Sweep (delete) all unmarked objects
+
+Example
+let obj1 = { a: 1 };
+let obj2 = { b: 2 };
+
+obj1 = null;
+During GC
+
+{ b: 2 } → marked ✅
+
+{ a: 1 } → unmarked ❌ → removed
+
+4️⃣ Closures & Garbage Collector
+
+Closures can prevent GC.
+
+function outer() {
+  let data = { big: "memory" };
+
+  return function inner() {
+    console.log(data.big);
+  };
+}
+
+let fn = outer();
+Important
+
+outer() finished execution
+
+But data is still reachable via inner
+
+❌ GC cannot remove data
+
+Fix (release reference)
+fn = null;
+
+Now:
+
+inner unreachable
+
+data unreachable
+
+✅ GC cleans up both
+
+5️⃣ GC with Async Code
+function load() {
+  let info = { name: "User" };
+
+  setTimeout(() => {
+    console.log(info.name);
+  }, 1000);
+}
+
+load();
+Key point
+
+Even after load() ends
+
+info stays in heap
+
+Because async callback still references it
+
+✅ After callback runs and finishes → GC can clean up
+
+6️⃣ Common Garbage Collection Pitfall (Memory Leak)
+❌ Leak Example
+let cache = [];
+
+function store() {
+  cache.push({ data: new Array(1e6) });
+}
+
+cache is global
+
+Objects are always reachable
+
+❌ GC will NEVER remove them
+
+✅ Fix
+cache.length = 0;
+// or
+cache = null;
+7️⃣ Detached DOM Nodes (Classic GC Trap)
+let div = document.createElement("div");
+document.body.appendChild(div);
+
+document.body.removeChild(div);
+// div still referenced!
+
+❌ GC cannot remove div
+
+Fix
+div = null;
+8️⃣ What GC Can & Cannot Do
+✅ GC CAN
+
+Remove unused objects
+
+Clean cyclic references
+
+Manage heap automatically
+
+❌ GC CANNOT
+
+Free memory if references exist
+
+Detect “logical” memory leaks
+
+Run at predictable times
+
+🧠 Mental Model (Interview Gold)
+Reachable → Alive → Not collected
+Unreachable → Dead → Collected
+References keep objects alive
+Closures extend object lifetime
+⭐ Interview One-Liner
+
+“JavaScript garbage collection works on reachability.
+If an object cannot be reached from the root, it becomes eligible for garbage collection using mark-and-sweep.”
