@@ -1,0 +1,51 @@
+FILTER :: filter function basically used to filter 😂
+
+👉 filter() creates a new array containing only the elements that satisfy a given condition.
+It does not modify the original array.
+
+👉 Perfect Syntax
+array.filter((element, index, array) => {
+  return condition; // true → keep element, false → remove
+});
+
+
+simple example ::
+
+1) 
+const arr = [1,2,3,4,5,6];
+function odd(x){
+	return x % 2 != 0;
+}
+const output = arr.filter(odd);
+
+2) 
+const arr = [1, 2, 3, 4, 5];
+const evenNumbers = arr.filter(x => x % 2 === 0);
+console.log(evenNumbers); // [2, 4]
+
+How it works::
+-Runs the callback on each element
+-If it returns true → element is included
+-If it returns false → element is excluded
+
+Returns a new array
+
+
+===========================================================================================
+fresher level not do experience level example ::
+
+list the people whose age is less that 30 and firstname of those people:: 
+
+
+const users = [
+{name:"adarsh",firstname:"m",age:26},
+{name:"john",firstname:"s",age:27},
+{name:"ton",firstname:"l",age:38},
+{name:"san",firstname:"h",age:26},
+]
+
+users.filter(function (user){
+return user.age<30;
+
+}
+).map((user) => user.firstname);

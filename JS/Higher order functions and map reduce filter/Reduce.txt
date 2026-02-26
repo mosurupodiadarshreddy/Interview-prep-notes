@@ -1,0 +1,422 @@
+Reduce ::
+Definition:
+👉 reduce() processes an array and reduces it to a single value (number, object, array, etc.) by applying a callback function on each element.
+
+Perfect Syntax
+
+array.reduce((accumulator, currentValue, index, array) => {
+  return updatedAccumulator;
+}, initialValue);
+
+Simple Example (Sum):
+1)
+const arr = [1, 2, 3, 4];
+const sum = arr.reduce((acc, curr) => acc + curr, 0);
+console.log(sum); // 10
+
+
+2)const arr=[2,3,4,5];
+   const output = arr.reduce(function (acc,cur){
+        return acc+cur;  or acc = acc+cur return acc;
+    },0);
+
+console.log(output);
+How it works
+accumulator → stores the result(result and initial value for accumulator )
+currentValue → current element(each element in array loop one by one)
+initialValue → starting value of accumulator
+Runs left to right
+Returns one final value
+
+ one-liner
+👉 “reduce() transforms an array into a single value by accumulating results using a callback function.”
+
+example for finding max value :: 
+
+normally how we write ::
+const arr = [1,2,3,4];
+function max(arr){
+    let max = 0;
+    for(let i=0;i<arr.length;i++){
+        if(arr[i]>max){
+            max = arr[i]
+        }
+    }
+    console.log(max);
+}
+max(arr);
+
+by using reduce ::::
+const arr = [1,4,3,2];
+
+arr.reduce(function(acc,curr){
+	if (curr > acc){
+		acc = curr;
+	}
+	return acc;
+},0); // 4 printed
+
+===========================================================================================
+
+above examples done by the freshers do this as the exp :
+how many people are particular unique age :: 
+{26:2,27:1,28:1}  like this 
+
+const users = [
+{name:"adarsh",firstname:"m",age:26},
+{name:"john",firstname:"s",age:27},
+{name:"ton",firstname:"l",age:28},
+{name:"san",firstname:"h",age:26},
+]
+
+users.reduce(function (acc,curr){
+  if(acc[curr.age]) {
+      acc[curr.age]= acc[curr.age]+1;
+  } 
+    else {
+        acc[curr.age] = 1
+    }
+
+   return acc; 
+},{});
+
+{26: 2, 27: 1, 28: 1}
+
+🔹 What this code is doing (in one line)
+
+👉 It counts how many users are there for each age.
+
+Final output will be:
+
+{ 26: 2, 27: 1, 28: 1 }
+🔹 What is acc?
+{}
+
+acc (accumulator) is an object
+
+It stores the final result
+
+Each key = age
+
+Each value = count of users with that age
+
+🔹 What is curr?
+{name:"adarsh", firstname:"m", age:26}
+
+curr is the current user object during iteration
+
+🔹 Why acc[curr.age] ?
+Step-by-step thinking:
+🔸 curr.age
+curr.age === 26   // for first user
+🔸 acc[curr.age]
+acc[26]
+
+➡️ Accesses the value stored for age 26 in acc
+
+🔹 How it works internally (iteration-wise)
+✅ Initial value
+acc = {}
+🔁 1st user {age: 26}
+acc[26] ❌ // doesn't exist
+
+➡️ go to else
+
+acc[26] = 1
+
+acc becomes:
+
+{ 26: 1 }
+🔁 2nd user {age: 27}
+acc[27] ❌
+
+➡️
+
+acc[27] = 1
+
+acc becomes:
+
+{ 26: 1, 27: 1 }
+🔁 3rd user {age: 28}
+acc[28] ❌
+
+➡️
+
+acc[28] = 1
+
+acc becomes:
+
+{ 26: 1, 27: 1, 28: 1 }
+🔁 4th user {age: 26}
+acc[26] ✅ exists
+
+➡️
+
+acc[26] = acc[26] + 1; // 1 + 1
+
+acc becomes:
+
+{ 26: 2, 27: 1, 28: 1 }
+🔹 Key point (VERY IMPORTANT)
+acc[curr.age]
+
+👉 Means:
+“Use the age value as a dynamic key in the object.”
+
+Same as:
+
+acc["26"]
+
+(because object keys are strings internally)
+
+🔹 Simplified mental model 🧠
+
+Think of acc like this:
+
+{
+  age: count
+}
+
+So:
+
+acc[26] = number of users aged 26
+🎯 Interview one-liner
+
+👉 acc[curr.age] dynamically creates or updates an object key using the current user’s age to count occurrences.
+
+
+❌ What you are thinking (but NOT happening)
+26 = 26 + 1 ❌
+
+👉 This is never happening.
+
+✅ What is ACTUALLY happening
+acc[26] = acc[26] + 1;
+Break it down 👇
+1️⃣ acc[26]
+
+This does NOT mean the number 26.
+
+It means:
+
+acc[26]  // value stored at key "26" in the object
+
+Earlier, we had:
+
+acc = { 26: 1, 27: 1, 28: 1 }
+
+So:
+
+acc[26] === 1
+2️⃣ Right side first
+acc[26] + 1
+
+Substitute value:
+
+1 + 1 = 2
+3️⃣ Assign back to the SAME key
+acc[26] = 2
+
+Now object becomes:
+
+{ 26: 2, 27: 1, 28: 1 }
+🔑 SUPER IMPORTANT RULE
+object[key] = value
+
+key → label / property name
+
+value → data stored
+
+Key is NOT the value
+
+🧠 Think like this (mental model)
+acc = {
+  "26": 1   // key : value
+}
+
+After update:
+
+acc = {
+  "26": 2
+}
+🔍 Why acc[26] looks confusing
+
+Because 26 is used as a key, not as a number to calculate with.
+
+JS automatically converts it to a string:
+
+acc["26"]
+🎯 One-line interview explanation
+
+👉 acc[26] refers to the value stored at key "26" in the accumulator object, not the number 26 itself; so we increment the stored count from 1 to 2.
+
+I’ll explain once more, end-to-end, using ONLY this strategy 👇
+
+value_at_label_26 = value_at_label_26 + 1
+
+No reduce first, no shortcuts.
+
+🧠 Step 1: Think of acc as a label → value table
+let acc = {};
+
+Imagine this table (empty at start):
+
+Label	Value
+—	—
+🧠 Step 2: First user comes (age = 26)
+
+Code that runs:
+
+acc[26] = 1;
+
+Translate to strategy:
+
+value_at_label_26 = 1;
+
+Table becomes:
+
+Label	Value
+26	1
+🧠 Step 3: Second user comes (age = 26 again)
+
+Now this line runs:
+
+acc[26] = acc[26] + 1;
+Translate EXACTLY using the strategy:
+value_at_label_26 = value_at_label_26 + 1;
+🧠 Step 4: Replace value_at_label_26 with actual value
+
+From the table:
+
+value_at_label_26 = 1
+
+So:
+
+value_at_label_26 = 1 + 1
+
+Result:
+
+value_at_label_26 = 2
+🧠 Step 5: Write it back to the table
+
+Table becomes:
+
+Label	Value
+26	2
+
+✔ Label 26 never changes
+✔ Only the value written under it changes
+
+🔥 VERY IMPORTANT (this removes the confusion forever)
+❌ WRONG thinking
+26 = 26 + 1 ❌
+✅ CORRECT thinking
+value_at_label_26 = value_at_label_26 + 1 ✅
+🧠 Step 6: Now plug this back into reduce
+users.reduce((acc, curr) => {
+
+  // curr.age = 26
+
+  if (acc[curr.age]) {
+    // value_at_label_26 = value_at_label_26 + 1
+    acc[curr.age] = acc[curr.age] + 1;
+  } else {
+    // value_at_label_26 = 1
+    acc[curr.age] = 1;
+  }
+
+  return acc;
+}, {});
+🧠 One-sentence understanding (memorize this)
+
+👉 acc[26] = acc[26] + 1 means: “increase the value stored under label 26 by 1.”
+
+✅ Final output after all users
+{ 26: 2, 27: 1, 28: 1 }
+
+
+✅ Correct rule in JavaScript objects
+object[key] = value;
+🔹 Left side → KEY
+acc[26]   // key = "26"
+🔹 Right side → VALUE
+acc[26] + 1   // value + 1
+🔍 Apply this to your example
+acc[26] = acc[26] + 1;
+
+Read it as:
+
+“At key 26, store the value (current value at key 26 + 1)”
+
+Left side → where to store
+
+Right side → what to store
+===========================================================================================
+
+Let’s explain very clearly and slowly.
+const users = [
+{name:"adarsh",firstname:"m",age:26},
+{name:"john",firstname:"s",age:27},
+{name:"ton",firstname:"l",age:38},
+{name:"san",firstname:"h",age:26},
+]
+
+users.reduce(function (acc,curr){
+    if(curr.age < 30){
+        acc = curr.name;
+    }
+    return acc;
+},{});
+
+
+Your code
+users.reduce((acc, curr) => {
+  if (curr.age < 30) {
+    acc.push(curr.name);
+  }
+  return acc;
+}, {});
+🔴 Core problem
+acc.push(curr.name);
+
+push() exists only on arrays
+
+{} (object) does NOT have push
+
+So:
+
+acc = {}
+acc.push ❌  // undefined
+
+That’s why it doesn’t work.
+
+✅ Correct version
+users.reduce((acc, curr) => {
+  if (curr.age < 30) {
+    acc.push(curr.name);
+  }
+  return acc;
+}, []);
+
+Now:
+
+acc starts as an array
+
+push() works
+
+names get collected
+
+🧠 Golden rule (MEMORIZE THIS)
+In reduce():
+
+Use [] → when you want a list (push, map, filter)
+
+Use {} → when you want key–value pairs (counts, groups)
+
+🫙 Jar analogy (quick)
+
+{} → jars with labels
+
+[] → basket where you throw items
+
+push() = throw item into basket

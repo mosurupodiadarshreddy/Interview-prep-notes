@@ -1,0 +1,255 @@
+🧠 LIFETIME TRICK (memorize this first)
+Ask ONLY one question 👇
+❓ “What should the OUTPUT look like?”
+| Output type                         | Use this   |
+| ----------------------------------- | ---------- |
+| Same length array, transformed      | **map**    |
+| Smaller array (condition-based)     | **filter** |
+| One value / object / grouped result | **reduce** |
+===========================================================================================================================MAP========================================================
+✅ Question 1: Double numbers
+Input
+[1, 2, 3]
+Code
+const output = [1, 2, 3].map(x => x * 2);
+Output
+[2, 4, 6]
+Explanation
+
+Each number is transformed (x * 2), length stays same.
+
+✅ Question 2: Convert to binary
+Input
+[2, 4, 6]
+Code
+const output = [2, 4, 6].map(x => x.toString(2));
+Output
+["10", "100", "110"]
+Explanation
+
+Each number is converted to a string representation in base-2.
+
+✅ Question 3: Extract names from users
+Input
+const users = [
+  { name: "adarsh", age: 26 },
+  { name: "john", age: 27 },
+  { name: "ton", age: 38 },
+  { name: "san", age: 26 },
+];
+Code
+const names = users.map(user => user.name);
+Output
+["adarsh", "john", "ton", "san"]
+Explanation
+
+Each object is transformed into its name value.
+
+✅ Question 4: Add “Mr.” before each name
+Input
+["adarsh", "john", "ton", "san"]
+Correct Code
+const output = ["adarsh", "john", "ton", "san"].map(
+  name => "Mr. " + name
+);
+Output
+["Mr. adarsh", "Mr. john", "Mr. ton", "Mr. san"]
+Explanation
+
+Each string is transformed by adding a prefix.
+
+===========================================================================================================================FILTER=====================================================
+Great 👍 — Q1 and Q2 are PERFECT ✅
+Your confusion in Q3 and Q4 is very common, so let’s clear it slowly and permanently, then I’ll give you a FILTER answer sheet + rating.
+
+✅ What you already got right
+✅ Q1: Even numbers — correct
+nums.filter(x => x % 2 === 0);
+✅ Q2: Age < 30 — correct
+users.filter(user => user.age < 30);
+
+So logic-wise, you’re doing well 👍
+
+❌ Why Q3 is wrong (and how to think correctly)
+Your code
+names.filter(x => x.at(a));
+❌ Problems
+
+a is not defined
+
+at() is for index access, not checking first letter
+
+filter() needs a true / false condition
+
+🧠 How to THINK for filter
+
+Ask this question:
+
+“What condition decides whether this element should stay?”
+
+For “names starting with 'a'”, the condition is:
+
+first character === "a"
+
+✅ Correct Q3 solution (2 common ways)
+✔ Way 1: Using startsWith (BEST & CLEAN)
+const names = ["adarsh", "john", "alex", "san"];
+
+names.filter(name => name.startsWith("a"));
+✔ Way 2: Using index [0]
+names.filter(name => name[0] === "a");
+✅ Output
+["adarsh", "alex"]
+❌ Why Q4 is confusing
+Task
+
+Remove falsy values
+
+Falsy values in JS:
+
+false, 0, "", null, undefined, NaN
+🧠 Key JS truth
+Boolean(value)
+
+returns false for falsy values
+returns true for truthy values
+
+✅ Correct Q4 solution (VERY IMPORTANT TRICK)
+const values = [0, 1, "", "hi", null, undefined, true];
+
+values.filter(Boolean);
+🔥 Why this works
+
+filter() keeps elements where callback returns true
+Boolean(value) returns:
+false → removed
+true → kept
+
+✅ Output
+[1, "hi", true]
+📘 FILTER – ANSWER SHEET (Save this)
+🔑 When to use filter()
+
+Use filter() when you want to select some elements based on a condition.
+
+Just remember these 3 patterns:
+
+Numbers → %, <, >
+Strings → startsWith, includes
+Cleanup → filter(Boolean)
+
+===========================================================================================================================REDUCE=====================================================
+
+🔑 When to use reduce()
+
+Use reduce() when you want to convert an array into a single value
+(number, array, or object).
+
+🔥 Lifetime decision trick
+If output is NOT an array of same length → use reduce
+🧠 Golden Rule (VERY IMPORTANT)
+reduce ALWAYS needs:
+1) initial value
+2) return acc in every iteration
+✅ QUESTION 1: Sum of numbers
+INPUT
+const arr = [1, 2, 3, 4];
+TASK
+
+👉 Find the sum of all numbers.
+
+✅ SOLUTION (Your preferred style)
+const output = arr.reduce(function (acc, cur) {
+  acc = acc + cur;
+  return acc;
+}, 0);
+OUTPUT
+10
+EXPLANATION
+
+acc starts at 0
+
+Each number is added to acc
+
+Final value is returned
+
+🧠 Pattern name
+
+👉 Accumulation (Number)
+
+✅ QUESTION 2: Count users by age
+INPUT
+const users = [
+  { name: "adarsh", age: 26 },
+  { name: "john", age: 27 },
+  { name: "ton", age: 38 },
+  { name: "san", age: 26 },
+];
+TASK
+
+👉 Count how many users belong to each age.
+
+EXPECTED OUTPUT
+{ 26: 2, 27: 1, 38: 1 }
+✅ SOLUTION
+const output = users.reduce(function (acc, curr) {
+  if (acc[curr.age]) {
+    acc[curr.age] = acc[curr.age] + 1;
+  } else {
+    acc[curr.age] = 1;
+  }
+  return acc;
+}, {});
+EXPLANATION
+
+acc is an object {}
+
+curr.age is used as a dynamic key
+
+If age exists → increment
+
+Else → initialize with 1
+
+🧠 Pattern name
+
+👉 Grouping / Counting
+
+✅ QUESTION 3: Collect names where age < 30
+TASK
+
+👉 Get names of users whose age is less than 30
+👉 Without using filter() or map()
+
+EXPECTED OUTPUT
+["adarsh", "john", "san"]
+✅ SOLUTION
+const output = users.reduce(function (acc, curr) {
+  if (curr.age < 30) {
+    acc.push(curr.name);
+  }
+  return acc;
+}, []);
+EXPLANATION
+
+acc is an array []
+
+Condition checks age
+
+Matching names are pushed
+
+return acc is mandatory
+
+🧠 Pattern name
+
+👉 Filter + Map using Reduce
+⚠️ COMMON REDUCE MISTAKES (YOU AVOIDED MOST)
+
+❌ Forgetting return acc
+❌ Using {} when [] is needed
+❌ Overwriting acc instead of accumulating
+
+🧠 REDUCE – LIFETIME MEMORY BLOCK
+reduce =
+- initial value decides type
+- always return acc
+- use when result is single value / object / grouped data

@@ -1,0 +1,107 @@
+MAP :: map reduce filter are higher order functions in js 
+** most of the people understands what is map filter reduce but dontknow where to use use it ..
+** map function basically used to transform an array what do u mean by transformation transform each and every value in array and get a new array out from it 
+
+example : we have array 
+const arr = [2,3,1,5];
+const output = arr.map(double);
+
+function double(x){
+	return x*2
+}
+
+console.log(output);
+
+here : 
+const output = arr.map(double);
+➡️ map() goes through each element of arr
+➡️ For every element, it calls the double function
+➡️ It returns a new array with transformed values
+
+function double(x) {
+  return x * 2;
+}
+
+➡️ This function takes one value and multiplies it by 2
+
+What happens internally:
+
+double(2) → 4
+double(3) → 6
+double(1) → 2
+double(5) → 10
+
+console.log(output);
+
+➡️ Output:
+
+[4, 6, 2, 10]
+Key interview points (short):
+map() does not modify original array
+Always returns a new array
+Used for transformation, not filtering or aggregation
+
+one more example :: print binary numbers 
+
+const arr = [1,2,3]
+
+function binary(x){
+	return x.toString(2);
+}
+const output = arr.map(binary);
+
+console.log(output);
+
+---- people use this :::
+
+✅ Way 1: Separate named function (your current code)
+const arr = [1, 2, 3];
+
+function binary(x) {
+  return x.toString(2);
+}
+
+const output = arr.map(binary);
+console.log(output);
+
+✔ Clean
+✔ Reusable
+
+✅ Way 2: Function expression inside map()
+const output = arr.map(function (x) {
+  return x.toString(2);
+});
+
+✔ Used when function is needed only once
+
+✅ Way 3: Arrow function (most common)
+const output = arr.map(x => x.toString(2));
+
+✔ Short
+✔ Modern JS
+✔ Most preferred in real projects
+
+🔥 Output (same for all)
+["1", "10", "11"]
+
+🎯 One-line answer
+👉 “Yes, functions can be passed directly to map() as a callback using named functions, function expressions, or arrow functions.”
+===========================================================================================
+experienced people exmples :::
+
+list full names of users ::
+
+const users = [
+{name:"adarsh",firstname:"m",age:26},
+{name:"john",firstname:"s",age:27},
+{name:"ton",firstname:"l",age:28},
+{name:"san",firstname:"h",age:26},
+]
+
+users.map(function (user){
+	return user.name + " " + user.firstname;
+}); // ['adarsh m', 'john s', 'ton l', 'san h']
+
+
+
+
