@@ -1,0 +1,26 @@
+1)JS is a single threaded language and it can do only one thing at a time and it have only one call stack
+
+2)what ever code we give for js it will be quickly executed by js engine it doesnot wait for anything
+
+3)in this example ::
+
+console.log("hi");
+console.log("adarsh");
+console.log("bye");
+
+// hi adarsh byee 
+
+so what if we need wait at adarsh and then print byee means or else we need print this after after 5 seconds console.log("adarsh"); we just wrap it into a callback function 
+
+console.log("hi");
+setTimeout(function (){
+	console.log("adarsh");
+},5000);
+console.log("bye");
+
+so now to print adarsh message is job of setTimeout web API'S , so using callback is a powerful way to do asynchronous thing in js and we can take a code and pass it to seTimeout and will execute later that's done 
+
+callback plays a very important role in writing asynchronous code in js so this was a fresher example lets take one more senior level example 
+
+
+
