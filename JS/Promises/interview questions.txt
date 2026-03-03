@@ -1,0 +1,6 @@
+what is promise?
+--promise is an a object representing eventual completion of async operation
+
+--promise object is a plceholder for certain period of time until we receive a value from async operation
+
+--container for a future value 

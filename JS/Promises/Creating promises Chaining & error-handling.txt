@@ -1,0 +1,805 @@
+Here we will see the how to create our own promises example ::
+
+const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise.then(function (){
+	proceedtopayment(orderid);
+}
+
+now we will see who is creating this promise and now we create our promise and send it to consumer , so consumer here is promise.then(function (){
+	proceedtopayment(orderid);
+}
+
+
+//producer part of promise think we are in producer side means createorder() and we need to return promise who ever calling our createorder function
+
+function createorder (cart){
+	const promise = new Promise();
+
+	return promise;
+}
+
+//to create a promise we will use new keyword called promise and promise constructor 
+"- const promise = new Promise(); -"
+
+so this promise constructor will take a function and that function will have two parameters which is resolve and reject given by the javascript to build promises 
+
+const promise = new promise(function (resolve,reject){
+
+});
+
+// this is a way to create promise and inside promise we will write our own logic for create promise and return or throw an error response 
+
+now create order basically takes cart items and validates cart and takes orderid and if successfully validated means it returns orderid or some other logic what needed so we will wirte promise like validating cart and returning success and error message 
+
+basically we are writing producer part of it we can reject promise or we can resolve it 
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise.then(function (orderId){
+	console.log(orderId);
+	// proceedtopayment(orderid);
+});
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+		 resolve(orderId);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return true;
+}
+</script>
+
+// output : 12345 
+
+so now we can delay this result also think for getting orderId it took 5-6 seconds and what will be promise in that time till resolve 
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise.then(function (orderId){
+	console.log(orderId);
+	// proceedtopayment(orderid);
+});
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+		 setTimeout(function (){
+			resolve(orderId);
+		 },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return true;
+}
+
+</script>
+
+now we will see if cart is not validated means 
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise.then(function (orderId){
+	console.log(orderId);
+	// proceedtopayment(orderid);
+});
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+		 setTimeout(function (){
+			resolve(orderId);
+		 },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return false;
+}
+
+</script>
+
+it shows red colour error like cart is not validated it means that is browser error we are not handling that error 
+
+so devolopers should not do this always we should handle errors so promise also comes with function catch it is just like promise object can be attached failure call also 
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise.then(function (orderId){
+	console.log(orderId);
+	// proceedtopayment(orderid);
+})
+.catch(function (err){
+	console.log(err.message);
+});
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+		 setTimeout(function (){
+			resolve(orderId);
+		 },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return false;
+}
+
+</script>
+
+
+now we see developer handled error response 
+so now developers will do this go deep deep and dive still more inside .....
+
+
+
+main point to remember here is :: 
+🧠 Promise chain rule (VERY IMPORTANT)
+Each .then() receives the value returned from the previous .then()
+
+✅ Correct Way (Return the value)
+
+You must return the next promise.
+
+✔ Fixed Code
+promise
+.then(function (orderId){
+    console.log(orderId);
+    return proceedtoPayment(orderId); // return it!
+})
+.then(function(paymentinfo){
+    console.log(paymentinfo);
+})
+.catch(function (err){
+    console.log(err.message);
+});
+🔥 Why this works
+
+Now flow becomes:
+
+createorder() resolves → gives "12345"
+
+First .then(orderId) runs
+
+You RETURN proceedtoPayment(orderId)
+
+That returns a Promise
+
+Next .then() receives "payment success"
+
+⚡ Very Important Concept
+❌ This does NOT pass value:
+.then(function(orderId){
+   proceedtoPayment(orderId);
+})
+✅ This DOES:
+.then(function(orderId){
+   return proceedtoPayment(orderId);
+})
+🎯 Final Promise Chain Rule (Memorize This)
+If you want to pass data to next .then()
+→ You MUST return something
+💡 Bonus: Even cleaner version
+createorder(cart)
+  .then(orderId => proceedtoPayment(orderId))
+  .then(paymentinfo => console.log(paymentinfo))
+  .catch(err => console.log(err.message));
+
+🧠 Golden Rule (Very Important)
+If you want next .then() to receive something
+→ you MUST return it
+
+you can do this also ::
+why it is getting orderId not defined 
+<div id = "btn">Hello</div>
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise
+.then(function (orderId){
+	console.log(orderId)
+})
+.then(function (){
+	proceedtoPayment(orderId);
+})
+.then(function(paymentinfo){
+	console.log(paymentinfo);
+})
+.catch(function (err){
+	console.log(err.message);
+});
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+			resolve (orderId);
+		//  setTimeout(function (){
+		// 	resolve(orderId);
+		//  },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return true;
+}
+
+function proceedtoPayment(orderId){
+	const pr2 = new Promise(function (resolve,reject){
+		if(!orderId){
+			const err = new Error("payment failed");
+			reject(err); 
+		}
+		else{
+			resolve("payment success");
+		}
+	})
+	return pr2;
+}
+</script>
+
+
+or else we can ruturn like this right :
+promise
+.then(function (orderId){
+	console.log(orderId);
+return orderId; 
+})
+.then(function (orderId){ 
+	proceedtoPayment(orderId);
+})
+.then(function(paymentinfo){
+	console.log(paymentinfo);
+})
+.catch(function (err){
+	console.log(err.message);
+});
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+			resolve (orderId);
+		//  setTimeout(function (){
+		// 	resolve(orderId);
+		//  },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return true;
+}
+
+function proceedtoPayment(orderId){
+	const pr2 = new Promise(function (resolve,reject){
+		if(!orderId){
+			const err = new Error("payment failed");
+			reject(err); 
+		}
+		else{
+			resolve("payment success");
+		}
+	})
+	return pr2;
+}
+</script>
+
+----------------------------------------------------------------------------------------------------------
+
+
+Yes ✅ — exactly correct thinking.
+
+catch() will handle the error from any step in the chain above it, even if there are 10 .then() links.
+
+Let’s make this crystal clear.
+
+🔗 Promise Chain Error Flow
+
+Example:
+
+createorder(cart)
+  .then(orderId => {
+    console.log(orderId);
+    return proceedtoPayment(orderId);
+  })
+  .then(paymentInfo => {
+    return updateWallet(paymentInfo);
+  })
+  .then(result => {
+    return sendEmail(result);
+  })
+  .catch(err => {
+    console.log("Error:", err.message);
+  });
+🧠 What Happens If Something Fails?
+Case 1️⃣ createorder fails
+
+→ control jumps directly to .catch()
+
+Case 2️⃣ proceedtoPayment fails
+
+→ skips remaining .then()
+→ goes to .catch()
+
+Case 3️⃣ updateWallet fails
+
+→ skips next .then()
+→ goes to .catch()
+
+Case 4️⃣ Any .then() throws error manually
+.then(() => {
+   throw new Error("Something broke");
+})
+
+→ goes to .catch()
+
+🔥 Important Rule
+If any Promise is rejected OR any error is thrown,
+the chain jumps to the nearest .catch()
+📌 Even If There Are 10 .then() Links
+
+Yes — even with 10 steps:
+
+.then()
+.then()
+.then()
+.then()
+.then()
+.then()
+.then()
+.then()
+.then()
+.then()
+.catch()
+
+If step 3 fails →
+Steps 4–10 are skipped →
+.catch() runs.
+------------------------------------------------------------------------------------------------------------------------------------------
+
+<div id = "btn">Hello</div>
+
+<script>
+   const cart = ["shoes","pants","shoes"];
+
+const promise = createorder(cart); //we create cart and it returns us order-id 
+
+promise
+.then(function (orderId){
+	console.log(orderId);
+	return orderId;
+})
+.then(function (orderId){
+	return proceedtoPayment(orderId);
+})
+.then(function(paymentinfo){
+	console.log(paymentinfo);
+})
+.catch(function (err){
+	console.log(err.message);
+})
+.then(function (){
+	console.log("no matters what happens i will definetly be called ");
+})
+;
+
+
+function createorder (cart){
+	const pr = new Promise(function (resolve,reject){
+		//validate cart
+		if(!validatecart(cart)){
+		 const err = new Error("cart is not valid");
+		 reject (err);  // we call this with some error 
+		} 
+		
+		//logic to createorder 
+		//think we crated order and we got orderid from db or somewhere 
+		const orderId = "12345";
+		if(orderId){
+			resolve (orderId);
+		//  setTimeout(function (){
+		// 	resolve(orderId);
+		//  },5000);
+		}
+	
+	});
+	return pr;
+}
+
+function validatecart(){
+	return true;
+}
+
+function proceedtoPayment(orderId){
+	const pr2 = new Promise(function (resolve,reject){
+		if(!orderId){
+			const err = new Error("payment failed");
+			reject(err); 
+		}
+		else{
+			resolve("payment success");
+		}
+	})
+	return pr2;
+}
+</script>
+
+
+
+Ahhh 🔥 now you’re asking the right conceptual question.
+
+You’re basically asking:
+
+Does this solve “Promise Hell”?
+
+Short answer:
+
+👉 YES — Promise chaining solves callback hell.
+👉 But improper chaining can still create messy code.
+
+Let’s clarify properly.
+
+🧨 What is Callback Hell?
+
+Old style:
+
+createOrder(cart, function(orderId){
+    proceedToPayment(orderId, function(paymentInfo){
+        updateWallet(paymentInfo, function(){
+            sendEmail(function(){
+                console.log("Done");
+            });
+        });
+    });
+});
+
+This pyramid shape 👇
+
+callback(
+   callback(
+      callback(
+         callback()
+      )
+   )
+)
+
+That is called:
+
+🔥 Callback Hell (Pyramid of Doom)
+
+🚀 Promises Solve This
+
+With Promises:
+
+createOrder(cart)
+  .then(orderId => proceedToPayment(orderId))
+  .then(paymentInfo => updateWallet(paymentInfo))
+  .then(() => sendEmail())
+  .catch(err => console.log(err));
+
+Now it is:
+
+Step 1
+Step 2
+Step 3
+Step 4
+
+Flat. Clean. Readable.
+
+So YES ✅
+
+Promise chaining solves callback hell.
+
+⚠️ But Can We Create Promise Hell?
+
+Yes — if you write like this:
+
+createOrder(cart)
+  .then(orderId => {
+      proceedToPayment(orderId)
+        .then(paymentInfo => {
+            updateWallet(paymentInfo)
+              .then(() => {
+                  console.log("Done");
+              });
+        });
+  });
+
+You’re nesting .then() inside .then().
+
+That becomes:
+
+Promise Hell (nested promises)
+
+But this is wrong usage.
+
+🔑 Correct Pattern
+
+Always return the next promise:
+
+.then(orderId => return proceedToPayment(orderId))
+
+Not:
+
+.then(orderId => {
+   proceedToPayment(orderId) // ❌ no return
+})
+🧠 Why Promise Chain Works
+
+Because:
+
+.then() returns a new Promise
+
+Each step waits for previous one automatically.
+
+That’s why it flattens.
+
+🏆 Final Clear Answer
+
+Your structure:
+
+.then(...)
+.then(...)
+.catch(...)
+.then(...)
+
+✔ This is NOT Promise Hell
+✔ This is correct chaining
+✔ This is how Promises were designed to be used
+
+🎯 Interview Answer
+
+Promise chaining eliminates callback hell by flattening asynchronous flows and enabling sequential execution without nested callbacks.
+
+Excellent 👌 this is the final missing piece in your Promise understanding.
+
+You are asking:
+
+Why does .then() run after .catch()?
+How does it become resolved again?
+
+Let’s break it cleanly.
+
+🔗 Your Chain
+promise
+.then(...)
+.then(...)
+.then(...)
+.catch(function (err){
+    console.log(err.message);
+})
+.then(function (){
+    console.log("no matters what happens i will definetly be called ");
+});
+🧠 Core Rule of Promises
+
+A Promise can be in only 3 states:
+
+pending → fulfilled
+pending → rejected
+
+Now here is the MOST IMPORTANT RULE:
+
+.catch() is just a special .then()
+
+Internally:
+
+promise.catch(fn)
+
+is same as:
+
+promise.then(null, fn)
+🔥 What Happens When Error Occurs?
+
+Suppose some step fails.
+
+Chain becomes:
+
+Rejected
+↓
+.catch() runs
+
+Now inside .catch() you wrote:
+
+.catch(function (err){
+    console.log(err.message);
+})
+
+Notice:
+
+You did NOT throw anything
+You did NOT return Promise.reject()
+
+So what happens?
+
+JS automatically does:
+
+return undefined;
+
+So now the Promise becomes:
+
+Resolved with undefined
+🔄 That’s Why Next .then() Runs
+
+After .catch() finishes successfully:
+
+Rejected
+↓
+.catch() handles it
+↓
+Returns undefined
+↓
+Promise becomes RESOLVED again
+↓
+Next .then() runs
+
+So this executes:
+
+.then(function (){
+    console.log("no matters what happens i will definetly be called ");
+})
+🧠 Think of .catch() Like This
+
+Imagine:
+
+Error happened
+↓
+.catch() says: "I handled it, don't worry"
+↓
+Chain continues normally
+🔥 Very Important Concept
+If .catch() returns something → chain continues resolved
+If .catch() throws again → chain remains rejected
+
+Example:
+
+.catch(err => {
+   console.log(err.message);
+   throw err;  // ❌ rethrow
+})
+
+Now next .then() will NOT run.
+
+🎯 Small Demonstration
+Case 1 — Continue chain
+Promise.reject("Error")
+  .catch(err => {
+     console.log(err);
+  })
+  .then(() => {
+     console.log("Runs");
+  });
+
+Output:
+
+Error
+Runs
+Case 2 — Stop chain
+Promise.reject("Error")
+  .catch(err => {
+     console.log(err);
+     throw err;
+  })
+  .then(() => {
+     console.log("Will not run");
+  });
+
+Output:
+
+Error
+(Uncaught Error)
+💡 In Your Exact Code (Valid Cart Case)
+
+Since no error happens:
+
+createorder → resolved
+proceedtoPayment → resolved
+
+So .catch() is skipped.
+
+Then last .then() runs.
+
+🧠 Final Mental Model
+If catch handles error → chain becomes resolved
+If catch rethrows → chain remains rejected
+🎯 Interview-Ready Answer
+
+When a .catch() handles a rejection and does not rethrow the error, it converts the Promise back into a resolved state, allowing subsequent .then() blocks to execute.
+

@@ -1,0 +1,332 @@
+-- promises are use to handle async operations in js 
+
+will go with example how things work before promises and after promises ::
+
+const cart = ["shoes","pants","kurta"];
+
+createorder(cart,function(){
+	proceedtopayment(orderId);
+});
+
+this is how we used to handle async operation using callbacks 
+
+but my dear friends there is a most important issue with this code what is that can you guess it that issue is inversion of control
+
+what is inversion of control means : so now we are given payment() callback function to createorder function and thinking it will work and trusting blindly so what if payment() is never called what if called twice so we cannot trust this blidly and we given control of payment program to other api or other code this can be handled by promises 
+
+
+
+so now we create an createorder api like it no longer take a callback function it just take cart details 
+
+createorder(cart);
+
+what it will do is it will return us a promise what is that promise I will tell 
+
+const promise = createorder(cart); //when this line executed by js it will return a promise 
+
+promise is nothing but 
+{
+  state: "pending",
+  result: undefined
+} 
+
+object with some data value init and data value hold whatever createorder api returned to us and create order api is async operation it may take 5-6 seconds to execute when execution goes that like
+ {
+  state: "pending",
+  result: undefined
+}
+ and it is undefined not defined at that moment itself and when ever createorder() execution completed and fill this {data : undefined} to some data and will give some later point of time 
+
+
+so when js reached this line createorder() then we get
+ {
+  state: "pending",
+  result: undefined
+} 
+promise object and js goes next line execution and once aync time completes execution createorder() adds data to promise object automatically it means for example when ever you go fastfood center they will you plate immediately (promise object) but later they keep food to plate once your order is ready this is what promise is 
+
+🔐 PROMISES IN JAVASCRIPT — THE FINAL TRUTH
+1️⃣ Where Promises DO come from ✅
+
+A Promise is created ONLY in these situations:
+
+✅ Case 1: Function marked async
+async function greet() {
+  return "Hello";
+}
+
+const result = greet();
+
+🔍 What happens:
+greet() returns a Promise
+Promise resolves to "Hello"
+result instanceof Promise; // true
+
+📌 Rule
+
+Every async function ALWAYS returns a Promise
+(even if you return a normal value)
+
+✅ Case 2: Explicit new Promise()
+function createOrder(cart) {
+  return new Promise((resolve, reject) => {
+    // async work
+    resolve("orderId123");
+  });
+}
+
+const p = createOrder(cart);
+
+✔️ p is a Promise
+
+📌 Rule
+
+If you see new Promise, a Promise is being returned
+
+✅ Case 3: Built-in async APIs
+fetch("/api/data");
+Returns a Promise automatically.
+Common examples:
+| API                      | Returns         |
+| ------------------------ | --------------- |
+| `fetch()`                | Promise         |
+| `axios.get()`            | Promise         |
+| `setTimeout()`           | ❌ NOT a Promise |
+| `fs.promises.readFile()` | Promise         |
+
+📌 Rule
+
+If an API is async and chainable with .then(), it returns a Promise
+
+✅ Case 4: .then() ALWAYS returns a Promise
+fetch(url)
+  .then(res => res.json())
+  .then(data => console.log(data));
+
+Each .then() returns a new Promise.
+
+📌 Rule
+
+Promise chaining works because .then() returns a Promise
+
+2️⃣ Where Promises DO NOT come from ❌
+❌ Function declaration or assignment
+const data = function greet() {
+  return 10;
+};
+
+data → function
+
+❌ Not a Promise
+
+❌ Calling a normal (non-async) function
+function add(a, b) {
+  return a + b;
+}
+
+const result = add(2, 3);
+
+result → number
+
+❌ Not a Promise
+
+❌ Arrow functions (by default)
+const fn = () => "hello";
+
+❌ Not a Promise
+(unless marked async)
+
+❌ Callbacks
+setTimeout(() => {
+  console.log("Hi");
+}, 1000);
+
+Uses callback
+
+❌ No Promise returned
+
+3️⃣ The BIGGEST CONFUSION (MUST REMEMBER)
+❌ WRONG thinking
+
+“This function is a promise”
+
+✅ CORRECT thinking
+
+“This function RETURNS a promise WHEN executed”
+
+const fn = async () => "ok";
+
+fn;    // function
+fn();  // Promise
+4️⃣ One-screen cheat table 🧠
+| Code                   | Is Promise?      |
+| ---------------------- | ---------------- |
+| `function f(){}`       | ❌                |
+| `f`                    | ❌                |
+| `f()`                  | ❌ (unless async) |
+| `async function f(){}` | ❌                |
+| `f()` (async)          | ✅                |
+| `new Promise()`        | ✅                |
+| `fetch()`              | ✅                |
+| `.then()`              | ✅                |
+
+5️⃣ How to IDENTIFY a Promise in 5 seconds ⚡
+
+Ask these 3 questions:
+
+Is the function marked async?
+Does it return new Promise()?
+Is it a known async API like fetch, axios, DB calls?
+
+👉 If YES to any, then:
+
+value instanceof Promise === true
+6️⃣ Interview-ready final answer 🎯
+
+Promises are returned only by async functions, functions that explicitly return new Promise, or built-in asynchronous APIs like fetch.
+A function itself is never a Promise — only its execution may return one.
+
+
+✅ When does a function RETURN a Promise?
+
+A function returns a Promise ONLY in these situations 👇
+
+1️⃣ When it explicitly returns new Promise(...)
+function getData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("data received");
+    }, 1000);
+  });
+}
+
+const result = getData();
+
+✔️ result is a Promise
+📌 Rule
+If you see return new Promise(...), the function returns a Promise.
+
+2️⃣ When it returns another Promise
+function getUser() {
+  return fetch("/api/user"); // fetch already returns a Promise
+}
+
+const result = getUser();
+✔️ result is a Promise
+📌 Rule
+Returning a Promise → function returns a Promise.
+
+3️⃣ When the function is marked async (for later learning)
+async function greet() {
+  return "hello";
+}
+
+const result = greet();
+
+✔️ result is a Promise
+📌 Rule
+async forces return value to be wrapped in a Promise.
+(Just remember this for now; no need to use it yet.)
+
+4️⃣ When .then() is used in the return chain
+function getData() {
+  return fetch("/api/data").then(res => res.json());
+}
+
+const result = getData();
+
+✔️ result is a Promise
+📌 Rule
+.then() ALWAYS returns a Promise.
+
+❌ When a function does NOT return a Promise
+❌ Normal return values
+function add(a, b) {
+  return a + b;
+}
+
+❌ Not a Promise
+❌ Async work inside but no Promise returned
+function greet() {
+  setTimeout(() => {
+    console.log("hello");
+  }, 1000);
+}
+
+const result = greet();
+❌ result is undefined, NOT a Promise
+📌 Important
+
+Using async code inside a function does NOT make the function return a Promise automatically.
+
+🧠 One-look identification checklist
+
+Ask these 4 questions:
+
+1️⃣ Does the function return new Promise()?
+2️⃣ Does it return fetch / axios / db call?
+3️⃣ Does it return something with .then()?
+4️⃣ Is it marked async?
+
+👉 If YES to any → returns Promise
+👉 If NO to all → NOT a Promise
+🔒 Final one-line truth (memorize)
+
+A function returns a Promise only when it explicitly returns a Promise or is declared async.
+Async operations inside a function do not automatically make it return a Promise.
+
+===========================================================================================
+
+so now how do we continue our program once we have promise object data with us now we will attach callback function to this promise object so we will use function .then this is the function available over promise object 
+
+const promise = createorder(cart); 
+promise.then(function (ordered){
+	proceedtopayment(ordered);
+}
+
+in previous we passed payment function as argument to createorder() and blidly trusted and relying on it now we are attaching a callback function to promise object 
+
+now we have control of programming with us and promise will execute must and should callback function as soon as promise have data it will call definetly 100% of time and it will call just only once 
+
+fetch() ; it is an api given by browsers to make an external calls now we will us ehtis fetch function to make call for some api and bring some data ,,, and fetch function always results promise object only 
+
+
+and wen we print consoe.log(users) it prints promise object like pending fulfilled states 
+
+<script>
+    const API = "https://jsonplaceholder.typicode.com/users";
+    const users = fetch(API);
+    console.log(users);
+</script>
+
+when console.log executed users promise object is pending state so js wont wait it goes next line execution 
+
+three states of promises 
+1)pending
+2)fulfilled
+3)rejected
+
+===========================================================================================
+
+we solved inversion of control 
+
+createorder(cart)
+.then(function (orderid){
+	payment(result);
+})
+.then(function (paymentinfo){
+	ordersummary(result);
+})
+
+
+like this promise linkage result of createorder passed to paymen function and result of payment function passed to ordersummary 
+
+
+here we are just consuming the promises so next we lear how to create promises 
+
+
+
+
+
+
+
