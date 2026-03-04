@@ -1,0 +1,39 @@
+Promise API'S ::::
+
+we came to place where we need to make parallel API calls that is where we need to use promise API'S 
+
+before moving to the code will go with theory knowledge :
+
+1)promise.all :: suppose u want to make parallel API calls and get the result for suppose we have 10 userid's and we need to make 10 api calls and get result parallely .
+
+- and it is used to handle multiple promises together and multiple api calls 
+- it will take array of promises together like lets assume we have 3 promises promise.all([p1,p2,p3]) so here it makes 3 parallel calls gets result 
+
+- suppose p1 takes 3sec to get result p2 takes 1sec and p3 takes 2s suppose all of them are success means all calls success then output of promise.all will be an array with the result of all three promises [val1,val2,val3] val1 comes from p1 and val comes from p2 and val3 comes from p3 but the final promise.all will take 3sec to give result because promise.all will make all 3 api calls in parallel but it will wait for all of them to finish it will collect the results and this will be output [val1,val2,val3]
+
+-now what if any promise gets rejected like we talked about fulfilled and what if anyone get rejected
+
+1)paromise.all([p1,p2,p3]) so same p1takes 3s to fulfilled and p2 takes 1sec and p3 takes 2sec so we think p2 after 2sec got rejected as soon as anyone got rejected promise.all will through failure / rejected so it will through same error as its result and it will be same error returned by p2 immediately as soon as eror happened it will return error in this case p2 takes 1 sec after 1 sec we see error it will not wait for p1 and p3 it just throw error it wont check they got fulfilled or rejected and what if p2 success and p3 after 2 sec rejected means it will error of p3 final result 
+
+-so what will happen p1 and p3 now we cannot cancel the promise functionality once it started
+-basically its kind of all or none  
+
+
+2)promise.allsetteled([p1,p2,p3]) ::: what if like want results from successful proises atleast its ok like 1-2 fails in array of promises calls in that case we use this api promise.allsetteled 
+
+-same we have like promise.allsetteled([p1,p2,p3]) so if all are fulfilled means it will give us same result like [val1,val2,val3] 
+
+-now lets think p2 gets rejected like p2 rejected in 1sec now it still wait for all to settled after 3sec it will irrespective os success or failure it will give this [val1,err2,val3]
+
+
+3)promise.race([p1,p2,p3])  ::: the person who finish first will be the winner p1 takes 3s and p2 takes 1s and p3 takes 2s and as soon as p2 fulfilled it will give me result of val2 not in array (val2) like this it will give value of first settled promise 
+
+-suppose what if first promise is rejected like think p2 after 1sec got rejected, it will return ERROR will be thrown (error) so what ever result it will give result either val or error it will not wait for other promises to get settled  
+
+
+
+4)promise.any([p1,p2,p3]) :::: whenever first promise got resolved means it will wait for the first promise to get successful so as example p1 takes 3s and p2 takes 1s and p3 takes 2s it will return the (val2) and p2 rejected and p3 fulfilled means it will returnthe (val3) 
+
+- so if p3 also rejected means and p2 success the value will be (val1) 😂 what if everything fails here the return result will be aggregated error and it will be array of all three errors  [err1,err2,err3]
+
+
