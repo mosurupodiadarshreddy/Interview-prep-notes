@@ -35,5 +35,5 @@ before moving to the code will go with theory knowledge :
 4)promise.any([p1,p2,p3]) :::: whenever first promise got resolved means it will wait for the first promise to get successful so as example p1 takes 3s and p2 takes 1s and p3 takes 2s it will return the (val2) and p2 rejected and p3 fulfilled means it will returnthe (val3) 
 
 - so if p3 also rejected means and p2 success the value will be (val1) 😂 what if everything fails here the return result will be aggregated error and it will be array of all three errors  [err1,err2,err3]
-
+===========================================================================================
 
