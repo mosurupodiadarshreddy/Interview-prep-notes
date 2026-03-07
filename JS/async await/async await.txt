@@ -1,0 +1,1503 @@
+ASYNC   :::: is a keyword used to create async function it always returns promise
+
+
+1️⃣ Perfect Meaning of async
+async means the function will return a Promise and can handle asynchronous operations in a clean way.
+Simple definition:
+async = a function that works with promises and allows using await
+
+Example:
+
+async function getData() {
+  return "hello";
+}
+
+Internally this becomes:
+
+function getData() {
+  return Promise.resolve("hello");
+}
+
+So rule:
+
+normal function → returns value
+async function → returns Promise
+
+===========================================================================================
+2️⃣ What await does inside async
+ 
+await tells JavaScript:
+
+pause this async function
+until the promise is resolved
+
+Example:
+
+async function getUser() {
+  const data = await fetch("/api/user");
+  const user = await data.json();
+  console.log(user);
+}
+
+Without await you would write:
+
+fetch("/api/user")
+.then(res => res.json())
+.then(user => console.log(user));
+
+So async/await is cleaner syntax over promises.
+
+3️⃣ Why async/await was introduced
+
+Before async/await we had Promise chains:
+
+.then()
+.then()
+.then()
+.catch()
+
+Which becomes messy.
+
+Example:
+
+createOrder()
+.then(order => payment(order))
+.then(payment => ship(payment))
+.then(data => console.log(data))
+.catch(err => console.log(err));
+
+Async/await makes it look like synchronous code:
+
+async function process() {
+  try {
+    const order = await createOrder();
+    const payment = await payment(order);
+    const ship = await ship(payment);
+  } catch(err) {
+    console.log(err);
+  }
+}
+
+Much easier to read.
+
+4️⃣ Where we use async in real projects
+
+You use async whenever you deal with operations that take time.
+
+Examples:
+
+API calls
+async function loadUsers() {
+  const res = await fetch("/api/users");
+  const users = await res.json();
+  setUsers(users);
+}
+
+Very common in React apps.
+
+Multiple APIs
+
+Example dashboard loading data:
+
+async function loadDashboard() {
+  const users = await getUsers();
+  const orders = await getOrders();
+  const revenue = await getRevenue();
+}
+
+
+5️⃣ When NOT to use async
+
+You do not need async for synchronous code.
+
+Example:
+
+❌ unnecessary:
+
+async function add(a,b){
+  return a+b;
+}
+
+Better:
+
+function add(a,b){
+  return a+b;
+}
+
+6️⃣ Simple Rule (Best to Remember)
+
+Use async when dealing with:
+
+API calls
+Database
+File system
+Timers
+Network requests
+
+Basically anything that takes time.
+
+7️⃣ One Interview Line (Very Important)
+
+Interviewers love this answer:
+
+Async/await is syntactic sugar over promises that allows writing asynchronous code in a synchronous style while still using the event loop and promises internally.
+
+8️⃣ Real Example From Your Project
+
+Since you mentioned React + backend work, you probably already use async like this:
+
+useEffect(() => {
+  async function fetchData(){
+    const res = await fetch("/api/patients");
+    const data = await res.json();
+    setPatients(data);
+  }
+
+  fetchData();
+}, []);
+
+This is a very common real-world usage.
+
+Final Meaning in One Sentence
+async makes a function return a promise
+and allows using await to handle asynchronous operations cleanly.
+===========================================================================================
+
+--------- diff between normal promises and async await 
+await is a keyword that only be used inside async function and we write await infront of promise and it resolves the promise 
+
+
+normal promises :: 
+const p = new Promise (function (resolve,reject){
+	resolve("promise resolved");
+});
+
+function getdata(){
+	p.then((res) => {
+	console.log(res);
+})
+}
+
+getdata();
+
+// by using async and await 
+async function getdata1() {
+	const val = await p;
+console.log(val);
+}
+
+1️⃣ First we create a Promise
+const p = new Promise(function(resolve, reject){
+    resolve("promise resolved");
+});
+
+Meaning:
+
+A Promise object p is created.
+
+It is immediately resolved with value:
+
+"promise resolved"
+
+So internally it becomes something like:
+
+Promise { fulfilled: "promise resolved" }
+2️⃣ Normal Promise (.then())
+function getdata(){
+    p.then((res) => {
+        console.log(res);
+    })
+}
+
+getdata();
+What happens
+
+getdata() is called
+
+p.then() registers a microtask callback
+
+When the promise resolves, .then() runs
+
+res receives "promise resolved"
+
+Output:
+
+promise resolved
+Flow
+getdata()
+   ↓
+p.then(...)
+   ↓
+microtask queue
+   ↓
+console.log(res)
+3️⃣ Using async/await
+async function getdata1() {
+    const val = await p;
+    console.log(val);
+}
+What happens
+
+getdata1() starts executing
+
+It reaches await p
+
+JS pauses this function
+
+When p resolves, execution continues
+
+val gets "promise resolved"
+
+Output:
+
+promise resolved
+Flow
+getdata1()
+   ↓
+await p
+   ↓
+pause function
+   ↓
+promise resolves
+   ↓
+resume execution
+   ↓
+console.log(val)
+4️⃣ Important Internal Truth
+
+This is the key concept:
+
+async/await is just syntax sugar over promises
+
+Your second code internally becomes something like:
+
+function getdata1(){
+   return p.then((val)=>{
+       console.log(val);
+   })
+}
+
+So await internally uses .then().
+
+5️⃣ Code Comparison
+Promise style
+p.then(res => {
+   console.log(res);
+});
+Async/Await style
+const res = await p;
+console.log(res);
+
+Same result, but async/await is cleaner.
+
+6️⃣ Real Project Example
+Promise version
+fetch("/users")
+.then(res => res.json())
+.then(data => console.log(data));
+Async/Await version
+async function loadUsers(){
+   const res = await fetch("/users");
+   const data = await res.json();
+   console.log(data);
+}
+
+Much easier to read.
+
+7️⃣ Key Differences
+
+
+
+| Feature        | `.then()`             | `async/await`     |
+| -------------- | --------------------- | ----------------- |
+| Style          | Promise chain         | Synchronous style |
+| Readability    | Harder in long chains | Much cleaner      |
+| Error handling | `.catch()`            | `try/catch`       |
+| Internally     | Promise               | Promise           |
+
+8️⃣ One Small Thing in Your Code
+
+You didn't call getdata1().
+
+To run it:
+
+getdata1();
+
+Then output will be:
+
+promise resolved
+9️⃣ One Important Interview Point
+async function always returns a Promise
+
+Example:
+
+async function test(){
+   return "hello";
+}
+
+Actually returns:
+
+Promise { "hello" }
+
+✅ Summary
+
+.then() → handle promise using callbacks
+async/await → cleaner syntax built on top of promises
+
+
+--=========================================================================================
+
+diving deep into async await 
+
+1️⃣ Normal Promise (.then)
+2️⃣ Async / Await
+
+So you can explain this perfectly in interviews.
+
+1️⃣ Normal Promise Case (.then())
+Code
+const p = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("promise resolved");
+  }, 10000);
+});
+
+function handlePromise() {
+  p.then((val) => {
+    console.log("Namaste Akshay");
+    console.log(val);
+  });
+}
+
+handlePromise();
+console.log("End");
+Execution Explanation
+Step 1 — Promise is created
+const p = new Promise(...)
+
+A 10-second timer starts.
+
+Nothing prints yet.
+
+Step 2 — Call function
+handlePromise()
+
+Inside the function:
+
+p.then(...)
+
+This registers a callback with the promise.
+
+Important:
+
+.then() does NOT execute immediately
+
+It only runs after the promise resolves.
+
+Step 3 — Function finishes
+
+JavaScript continues executing next synchronous code.
+
+console.log("End")
+
+Output immediately:
+
+End
+Step 4 — After 10 seconds
+
+The promise resolves:
+
+resolve("promise resolved")
+
+Now the .then() callback is pushed to the microtask queue.
+
+Event loop runs it.
+
+Namaste Akshay
+promise resolved
+Output
+End
+(after 10 seconds)
+Namaste Akshay
+promise resolved
+2️⃣ Async / Await Case
+Code
+const p = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("promise resolved");
+  }, 10000);
+});
+
+async function handlePromise() {
+  console.log("Start");
+
+  const val = await p;
+
+  console.log("Namaste Akshay");
+  console.log(val);
+}
+
+handlePromise();
+console.log("End");
+Execution Explanation
+Step 1 — Promise starts timer
+10 second timer starts
+Step 2 — Call async function
+handlePromise()
+
+First line runs:
+
+Start
+Step 3 — Encounter await
+const val = await p;
+
+JavaScript does this:
+
+pause this async function
+↓
+move remaining code to microtask queue
+↓
+continue executing other code
+
+Remaining code:
+
+console.log("Namaste Akshay")
+console.log(val)
+Step 4 — Next synchronous code runs
+console.log("End")
+
+Output so far:
+
+Start
+End
+Step 5 — After 10 seconds
+
+Promise resolves.
+
+Now microtask queue resumes async function.
+
+Namaste Akshay
+promise resolved
+
+Final Output
+Start
+End
+(after 10 seconds)
+Namaste Akshay
+promise resolved
+
+
+Key Difference Between Both
+| Feature           | `.then()`                     | `async / await`              |
+| ----------------- | ----------------------------- | ---------------------------- |
+| Execution style   | Callback                      | Sequential                   |
+| Function behavior | Function finishes immediately | Function pauses at `await`   |
+| Internally        | Promise callback              | Promise `.then()` internally |
+
+
+Important Concept
+
+Your statement becomes correct like this:
+
+When await is encountered, the async function pauses and the remaining code after await is scheduled in the microtask queue to run after the promise resolves.
+Simple Interview Explanation
+
+You can say:
+
+Async/await pauses the async function at the await statement and schedules the remaining code as a microtask once the promise resolves, while the JavaScript engine continues executing other synchronous code.
+====================================================================================
+Code
+const p1 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise 1 resolved");
+  }, 5000);
+});
+
+async function handlePromise() {
+  console.log("Hello World");
+
+  const val1 = await p1;
+  console.log("Namaste JavaScript");
+  console.log(val1);
+
+  const val2 = await p1;
+  console.log("Season 2");
+  console.log(val2);
+}
+
+handlePromise();
+Step 1 — Global Execution Context Starts
+
+The whole script enters Call Stack.
+
+Call Stack
+-----------
+Global()
+Step 2 — Create Promise
+const p1 = new Promise(...)
+
+The Promise executor runs immediately.
+
+Inside executor:
+
+setTimeout(() => {
+  resolve("Promise 1 resolved")
+},5000)
+
+Now:
+
+Callback Queue
+--------------
+setTimeout callback (5s)
+
+Promise state:
+
+p1 → pending
+Step 3 — Function Declaration
+async function handlePromise() {}
+
+Stored in memory.
+
+Nothing executed.
+
+Step 4 — Call Function
+handlePromise()
+
+Call stack:
+
+Call Stack
+-----------
+Global()
+handlePromise()
+Step 5 — First Console
+console.log("Hello World")
+
+Output:
+
+Hello World
+
+Call stack pops console.
+
+Step 6 — First await
+const val1 = await p1;
+
+Important behavior:
+
+await encountered
+↓
+pause async function
+↓
+remaining code moved to microtask queue
+
+Remaining code:
+
+console.log("Namaste JavaScript")
+console.log(val1)
+const val2 = await p1
+console.log("Season 2")
+console.log(val2)
+
+But this continuation cannot run until promise resolves.
+
+So:
+
+handlePromise() removed from call stack
+
+Now stack:
+
+Call Stack
+-----------
+Global()
+Step 7 — Wait 5 Seconds
+
+Event loop waits.
+
+After 5 seconds:
+
+setTimeout finishes.
+
+Callback moves from Callback Queue → Call Stack.
+
+Callback Queue
+--------------
+resolve("Promise 1 resolved")
+Step 8 — Promise Resolves
+resolve("Promise 1 resolved")
+
+Promise state becomes:
+
+p1 → fulfilled
+
+Now the paused async continuation goes to Microtask Queue.
+
+Microtask Queue
+---------------
+resume handlePromise
+Step 9 — Event Loop Runs Microtask
+
+Microtasks run before callback queue tasks.
+
+Call stack:
+
+Call Stack
+-----------
+resume handlePromise
+Step 10 — Continue Execution
+console.log("Namaste JavaScript")
+
+Output:
+
+Namaste JavaScript
+Step 11
+console.log(val1)
+
+Output:
+
+Promise 1 resolved
+Step 12 — Second await
+const val2 = await p1
+
+Important:
+
+p1 already resolved
+
+So JS does:
+
+pause async function again
+↓
+schedule continuation as microtask
+
+Microtask queue:
+
+Microtask Queue
+---------------
+resume remaining code
+Step 13 — Event Loop Runs Microtask
+
+Call stack:
+
+Call Stack
+-----------
+resume handlePromise
+Step 14
+console.log("Season 2")
+
+Output:
+
+Season 2
+Step 15
+console.log(val2)
+
+Output:
+
+Promise 1 resolved
+Final Output Timeline
+0s   Hello World
+5s   Namaste JavaScript
+5s   Promise 1 resolved
+5s   Season 2
+5s   Promise 1 resolved
+
+Visual Summary
+Call Stack Flow
+Global()
+handlePromise()
+console.log()
+await → pause
+
+Callback Queue
+setTimeout → resolve promise
+
+Microtask Queue
+resume async function
+resume again after second await
+
+Key Rules Demonstrated
+Rule 1
+Promise executor runs immediately
+
+Rule 2
+setTimeout → callback queue
+
+Rule 3
+Promise resolution → microtask queue
+Rule 4
+await pauses async function
+remaining code goes to microtask queue
+
+Final Mental Model
+Call Stack
+↓
+Microtask Queue (Promises / await)
+↓
+Callback Queue (setTimeout)
+
+
+
+Excellent thinking — this is exactly the subtle point people misunderstand. Let’s clarify it precisely.
+
+Short answer:
+
+The remaining code after await is not placed into the microtask queue immediately.
+It is scheduled only when the awaited promise resolves.
+
+So your intuition is correct.
+
+The Rule
+
+When JavaScript encounters:
+
+await p1
+
+It does:
+
+pause the async function
+↓
+attach a continuation via p1.then(...)
+↓
+when p1 resolves → continuation goes to microtask queue
+
+So the continuation waits for the promise resolution first.
+
+Think of await as this transformation
+
+Your code:
+
+const val1 = await p1;
+console.log("Namaste");
+
+Internally behaves like:
+
+p1.then((val1) => {
+  console.log("Namaste");
+});
+
+Notice something important:
+
+The .then callback cannot enter the microtask queue
+until the promise resolves.
+Timeline Using Your Example
+
+Promise creation:
+
+p1 pending
+setTimeout registered (callback queue)
+
+Async function runs:
+
+Hello World
+await p1
+
+Now the async function pauses.
+
+Nothing is in the microtask queue yet.
+
+After 5 seconds
+
+setTimeout fires.
+
+Callback queue → Call stack
+
+resolve("Promise 1 resolved")
+
+Now the promise becomes fulfilled.
+
+At this moment:
+
+the continuation of the async function
+is pushed to the microtask queue
+Event loop now runs microtasks
+Namaste JavaScript
+Promise 1 resolved
+Why your reasoning is correct
+
+You said:
+
+If it went to the microtask queue earlier it would run before the resolve callback
+
+Exactly.
+
+Because event loop priority is:
+
+Call Stack
+↓
+Microtask Queue
+↓
+Callback Queue
+
+If the continuation were already in the microtask queue, it would execute before the timer callback, which would break promise semantics.
+
+So JavaScript waits until:
+
+resolve() happens
+↓
+then schedules the microtask
+Visual Timeline
+t = 0
+Call stack:
+handlePromise()
+
+Hello World
+await p1
+(async function pauses)
+
+Queues:
+Microtask: empty
+Callback: setTimeout
+
+--------------------------------
+
+t = 5s
+Callback queue → call stack
+resolve()
+
+Promise becomes fulfilled
+
+Microtask queue:
+resume async function
+
+--------------------------------
+
+Event loop runs microtask
+
+Namaste JavaScript
+Promise 1 resolved
+Season 2
+Promise 1 resolved
+The Key Sentence (interview level)
+
+You can say:
+
+When await is encountered, the async function pauses and registers a continuation on the promise. Once the promise resolves, that continuation is scheduled as a microtask and the function resumes.
+
+One Tiny Extra Insight
+
+If the promise is already resolved:
+
+await Promise.resolve("done")
+
+Then the continuation is immediately queued as a microtask.
+
+But it still waits until the current synchronous execution finishes.
+
+Example:
+
+async function test() {
+  console.log("A");
+  await Promise.resolve();
+  console.log("B");
+}
+
+test();
+console.log("C");
+
+Output:
+
+A
+C
+B
+
+===========================================================================================
+Base Code (Sequential Awaits)
+const p1 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise 1 resolved");
+  }, 10000);
+});
+
+const p2 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise 2 resolved");
+  }, 5000);
+});
+
+async function handlePromise() {
+  console.log("Hello World");
+
+  const val1 = await p1;
+  console.log("After p1");
+  console.log(val1);
+
+  const val2 = await p2;
+  console.log("After p2");
+  console.log(val2);
+}
+
+handlePromise();
+
+Important rule:
+
+await pauses the async function
+remaining code resumes when promise resolves
+CASE 1
+p1 = 10 sec
+p2 = 5 sec
+Timeline
+
+Both promises start immediately when created.
+
+p1 → resolves at 10s
+p2 → resolves at 5s
+Step 1 — Function starts
+
+Call stack:
+
+handlePromise()
+
+Runs:
+
+Hello World
+Step 2 — First await
+await p1
+
+JS does:
+
+pause async function
+wait for p1
+
+Remaining code will resume only when p1 resolves.
+
+Step 3 — p2 resolves first (5s)
+
+But the function is waiting for p1, not p2.
+
+So nothing happens.
+
+p2 resolved
+(no code waiting for it yet)
+Step 4 — p1 resolves (10s)
+
+Now continuation goes to microtask queue.
+
+Event loop resumes function.
+
+Output:
+
+After p1
+Promise 1 resolved
+Step 5 — Second await
+
+Now code reaches:
+
+await p2
+
+But p2 already resolved at 5 seconds.
+
+So it resumes immediately via microtask.
+
+Output:
+
+After p2
+Promise 2 resolved
+Final Output
+0s   Hello World
+10s  After p1
+10s  Promise 1 resolved
+10s  After p2
+10s  Promise 2 resolved
+
+Total time:
+
+10 seconds
+CASE 2
+p1 = 5 sec
+p2 = 10 sec
+const p1 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise 1 resolved");
+  }, 5000);
+});
+
+const p2 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise 2 resolved");
+  }, 10000);
+});
+Step-by-step
+Step 1
+Hello World
+Step 2
+await p1
+
+Function pauses until 5 seconds.
+
+Step 3 — p1 resolves
+
+Function resumes.
+
+Output:
+
+After p1
+Promise 1 resolved
+Step 4 — Second await
+await p2
+
+But p2 still needs 5 more seconds.
+
+So function pauses again.
+
+Step 5 — p2 resolves (10s)
+
+Function resumes.
+
+Output:
+
+After p2
+Promise 2 resolved
+Final Output
+0s   Hello World
+5s   After p1
+5s   Promise 1 resolved
+10s  After p2
+10s  Promise 2 resolved
+
+Total time:
+
+10 seconds
+Key Insight
+
+Even though p2 finished earlier in Case 1, the code still waited for p1 first because of sequential awaits.
+
+await p1
+await p2
+
+This means:
+
+wait p1 first
+then wait p2
+Why This Matters in Real Projects
+
+Sequential awaits can slow applications.
+
+Better version:
+
+async function handlePromise() {
+  console.log("Hello World");
+
+  const [val1, val2] = await Promise.all([p1, p2]);
+
+  console.log(val1);
+  console.log(val2);
+}
+
+Now both run in parallel.
+
+Total time:
+
+max(p1,p2)
+One-Line Interview Summary
+
+You can say:
+
+When using sequential awaits, the async function waits for each promise in order, even if other promises have already resolved. This can delay execution compared to running them in parallel with Promise.all.
+
+===========================================================================================
+Yes — what Akshay Saini says is correct. Let’s explain it very clearly with the call stack and microtask queue, step by step.
+
+We’ll use a simple version of the code.
+
+Example
+const p1 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve("Promise resolved");
+  }, 5000);
+});
+
+async function handlePromise() {
+  console.log("Start");
+
+  const val = await p1;
+
+  console.log("Namaste JavaScript");
+  console.log(val);
+}
+
+handlePromise();
+
+console.log("End");
+Step 1 — Global Execution Starts
+
+Call stack:
+
+Call Stack
+-----------
+Global()
+Step 2 — Promise Created
+const p1 = new Promise(...)
+
+Inside promise:
+
+setTimeout(...,5000)
+
+So a timer is registered.
+
+Queues now:
+
+Callback Queue
+--------------
+setTimeout callback (5s)
+
+Promise state:
+
+p1 → pending
+Step 3 — handlePromise() called
+
+Call stack:
+
+Call Stack
+-----------
+Global()
+handlePromise()
+Step 4 — First console
+console.log("Start")
+
+Output:
+
+Start
+Step 5 — await encountered
+const val = await p1
+
+Now JavaScript does three things:
+
+1️⃣ Suspends the async function
+
+handlePromise removed from call stack
+
+2️⃣ Registers continuation on the promise
+
+Equivalent to:
+
+p1.then(resumeFunction)
+
+3️⃣ Event loop continues executing other code
+
+Call stack becomes:
+
+Call Stack
+-----------
+Global()
+Step 6 — Next synchronous line runs
+console.log("End")
+
+Output:
+
+End
+Step 7 — After 5 seconds
+
+The timer finishes.
+
+Callback queue:
+
+Callback Queue
+--------------
+resolve("Promise resolved")
+
+Event loop moves it to call stack.
+
+Step 8 — Promise resolves
+resolve("Promise resolved")
+
+Promise state becomes:
+
+p1 → fulfilled
+
+Now the continuation of the async function is scheduled.
+
+Microtask Queue
+---------------
+resume handlePromise
+Step 9 — Microtask executes
+
+Event loop checks microtasks first.
+
+Call stack:
+
+Call Stack
+-----------
+resume handlePromise()
+
+Now the function continues exactly where it was suspended.
+
+Step 10 — Remaining code runs
+console.log("Namaste JavaScript")
+console.log(val)
+
+Output:
+
+Namaste JavaScript
+Promise resolved
+Final Output
+Start
+End
+(5 seconds later)
+Namaste JavaScript
+Promise resolved
+What Akshay Saini Means
+
+His statement:
+
+When await is encountered, the async function is suspended and removed from the call stack. When the promise resolves, the continuation of that function is placed in the microtask queue and later pushed back to the call stack to resume execution.
+
+That means:
+
+await encountered
+↓
+function suspended
+↓
+removed from call stack
+↓
+promise resolves
+↓
+continuation added to microtask queue
+↓
+event loop moves it to call stack
+↓
+function resumes from where it stopped
+Visual Flow
+Call Stack
+-----------
+handlePromise()
+console.log("Start")
+await p1
+↓
+handlePromise suspended
+
+Call Stack
+-----------
+Global()
+
+After 5s
+
+Callback Queue
+-----------
+resolve()
+
+Promise fulfilled
+
+Microtask Queue
+-----------
+resume handlePromise
+
+Call Stack
+-----------
+resume handlePromise()
+
+console.log("Namaste JavaScript")
+console.log(val)
+Key Line (Interview Level)
+
+You can say:
+
+await suspends the async function and removes it from the call stack. Once the awaited promise resolves, the continuation of the function is queued as a microtask and later pushed back to the call stack to resume execution.
+
+===========================================================================================
+First important rule:
+
+fetch() only rejects the promise for network errors, not for HTTP errors like 404 or 500.
+
+So try...catch does not run automatically for 404.
+
+1️⃣ What happens when the URL is correct but the user does not exist
+
+Your URL:
+
+https://api.github.com/users/mosurupodiadarshreddyyy
+
+The domain and endpoint are correct.
+So the browser successfully contacts GitHub server.
+
+Server response:
+
+HTTP/1.1 404 Not Found
+
+But the server still sends valid JSON.
+
+Example response body from GitHub:
+
+{
+  "message": "Not Found",
+  "documentation_url": "https://docs.github.com/rest"
+}
+
+So fetch behaves like this:
+
+fetch() request successful
+↓
+server responded
+↓
+Promise RESOLVES (not rejected)
+2️⃣ What fetch() actually returns
+
+After:
+
+const data = await fetch(API);
+
+data is a Response object.
+
+Example:
+
+Response {
+  status: 404,
+  ok: false,
+  body: ReadableStream
+}
+
+Key property:
+
+ok = false
+
+ok means:
+
+true → status 200–299
+false → error status (404, 500, etc.)
+3️⃣ Why .json() does not fail
+
+Then you run:
+
+const result = await data.json();
+
+.json() only does this:
+
+read the response body
+↓
+parse JSON
+
+Since the server sent valid JSON, parsing succeeds.
+
+So result becomes:
+
+{
+  message: "Not Found"
+}
+
+And console prints:
+
+{ message: "Not Found" }
+
+No error occurs.
+
+Therefore:
+
+try block runs successfully
+catch block never runs
+4️⃣ Why we manually throw an error
+
+Since fetch does not treat 404 as an error, we must check it ourselves.
+
+That is why we write:
+
+if (!data.ok) {
+  throw new Error("User not found");
+}
+
+Now this line creates a real JavaScript error.
+
+Example flow:
+
+fetch resolves
+↓
+status = 404
+↓
+data.ok = false
+↓
+throw new Error()
+↓
+catch block runs
+5️⃣ Step-by-step with the fixed version
+async function handlepromise(){
+    try{
+        const data = await fetch(API);
+
+        if(!data.ok){
+            throw new Error("User not found");
+        }
+
+        const result = await data.json();
+        console.log(result);
+    }
+    catch(err){
+        console.log(err.message);
+    }
+}
+
+Execution:
+
+1️⃣ fetch(API) → request sent
+2️⃣ server responds → status 404
+3️⃣ data.ok = false
+4️⃣ we manually throw error
+
+throw new Error("User not found")
+
+5️⃣ catch block executes
+
+Output:
+
+User not found
+6️⃣ When fetch() actually throws automatically
+
+catch runs automatically only when network fails.
+
+Example:
+
+fetch("https://wrong-domain-12345.com")
+
+Then:
+
+network request failed
+↓
+Promise rejected
+↓
+catch runs
+
+Output:
+
+Failed to fetch
+7️⃣ Summary (very important)
+
+| Situation        | fetch behavior   |
+| ---------------- | ---------------- |
+| 200 OK           | Promise resolves |
+| 404 Not Found    | Promise resolves |
+| 500 Server Error | Promise resolves |
+| Network failure  | Promise rejects  |
+
+So 404 is not treated as an error by fetch.
+
+8️⃣ The correct production pattern
+
+Real applications usually do:
+
+async function getUser(){
+  try{
+    const res = await fetch(API);
+
+    if(!res.ok){
+      throw new Error(`HTTP Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+
+  }catch(err){
+    console.error(err);
+  }
+}
+9️⃣ The exact thing you asked
+
+You asked:
+
+“Are you saying the URL is correct but empty data?”
+
+Answer:
+
+No.
+
+The URL is correct and the server responded, but it responded with 404 JSON error data, not user data.
+
+So:
+
+request successful
+server returned error response
+
+But fetch still considers that a successful request.

@@ -1,0 +1,429 @@
+real world example of async await 
+
+now we will use fetch() function given by browser not by js ,so go api.github.com and take user url give ur userid to url and use it 
+
+
+and fetch returns the response object
+and this response object has a body which is redable stream
+and we need to do .json to convert readable stream to proper response  
+and that .json is again a promise and when it resolves it gives json value 
+
+
+suppose we have API to fetch users (https://api.github/users/mosurupodiadarshreddy)
+
+============================================================================================
+
+Good question. I’ll explain pin-to-pin (step by step) what happens from fetch() → response → readable stream → .json() → final object.
+
+We’ll use your code.
+
+<div class="hello">H E L L O</div>
+
+<script>
+async function handlepromise(){
+  const API = "https://api.github.com/users/mosurupodiadarshreddy";
+
+  const data = await fetch(API);
+  const result = await data.json();
+
+  console.log(result);
+  console.log(result.id);
+};
+
+handlepromise();
+</script>
+1️⃣ fetch() – What it is
+
+fetch() is not part of JavaScript itself.
+It is provided by the browser Web API.
+
+It is used to make HTTP requests (call APIs).
+
+Example request sent to server:
+
+GET https://api.github.com/users/mosurupodiadarshreddy
+
+Server responds with user information in JSON.
+
+2️⃣ What fetch() returns
+
+fetch() immediately returns a Promise.
+
+const data = await fetch(API);
+
+Equivalent to:
+
+fetch(API).then(response => ...)
+
+So internally:
+
+fetch()
+↓
+returns Promise
+↓
+Promise resolves with Response object
+3️⃣ Response Object
+
+When the request completes, the promise resolves and gives a Response object.
+
+Example structure:
+
+Response {
+  status: 200
+  ok: true
+  headers: ...
+  body: ReadableStream
+}
+
+Important property:
+
+body → ReadableStream
+
+This means the response is not plain JSON yet.
+
+4️⃣ Why the body is a ReadableStream
+
+When a server sends data, it does not always send everything at once.
+
+It sends data in chunks.
+
+Example idea:
+
+chunk1
+chunk2
+chunk3
+
+This streaming system is called:
+
+Readable Stream
+
+Benefits:
+
+Large files can be processed gradually
+
+Faster performance
+
+Memory efficient
+
+5️⃣ Converting stream to JSON
+
+Because the body is a stream, we must read and convert it.
+
+That is what .json() does.
+
+const result = await data.json();
+
+Important:
+
+data.json() returns another Promise
+
+Why?
+
+Because it must:
+
+read the stream
+↓
+combine chunks
+↓
+parse JSON
+6️⃣ Flow from fetch → JSON
+
+Full pipeline:
+
+fetch(API)
+↓
+returns Promise
+↓
+Promise resolves
+↓
+Response object received
+↓
+Response.body (ReadableStream)
+↓
+data.json()
+↓
+returns Promise again
+↓
+JSON parsed
+↓
+JavaScript object returned
+7️⃣ Step-by-Step Execution (Call Stack + Event Loop)
+Step 1
+
+JS runs:
+
+handlepromise()
+
+Call stack:
+
+handlepromise()
+Step 2
+const data = await fetch(API);
+
+fetch() starts network request.
+
+Browser handles it in Web APIs.
+
+Async function pauses.
+
+Call stack becomes empty.
+
+Step 3
+
+Network request finishes.
+
+Promise resolves.
+
+Microtask queue:
+
+resume handlepromise
+
+Async function continues.
+
+Now:
+
+data → Response object
+Step 4
+
+Next line runs:
+
+const result = await data.json();
+
+Again:
+
+read stream
+↓
+parse JSON
+
+This also returns a Promise.
+
+Function pauses again.
+
+Step 5
+
+When stream is fully read and parsed:
+
+Microtask queue resumes function.
+
+Now:
+
+result → JavaScript object
+
+Example result:
+
+{
+  login: "mosurupodiadarshreddy",
+  id: 191234567,
+  avatar_url: "...",
+  followers: 10
+}
+Step 6
+
+Now console logs run:
+
+console.log(result)
+console.log(result.id)
+
+Example output:
+
+{ login: "...", id: 191234567, ... }
+191234567
+8️⃣ Visual Timeline
+handlepromise()
+     ↓
+fetch(API)
+     ↓
+network request started
+     ↓
+await → pause function
+
+----- server response -----
+
+Promise resolved
+     ↓
+Response object received
+
+data.json()
+     ↓
+read stream
+     ↓
+parse JSON
+     ↓
+Promise resolved
+
+result available
+     ↓
+console.log(result)
+9️⃣ Key Things to Remember
+fetch()
+returns Promise
+fetch resolves with
+Response object
+Response.body
+ReadableStream
+data.json()
+reads stream + parses JSON
+returns Promise
+🔟 Simple Mental Model
+fetch()
+↓
+Promise
+↓
+Response
+↓
+ReadableStream
+↓
+.json()
+↓
+Promise
+↓
+JS Object
+Interview-level explanation
+
+You can say:
+
+fetch() returns a Promise that resolves with a Response object. The response body is a ReadableStream, so methods like .json() are used to read and parse the stream. .json() itself returns another Promise that resolves to the final JavaScript object.
+===========================================================================================
+
+error handling :::
+
+Good example 👍 You purposely used a wrong URL, so this is perfect to explain try...catch with async/await and fetch.
+
+First, your code:
+
+<div class="hello">H E L L O</div>
+<script>
+const API = "https://api.github.com/users/mosurupodiadarshreddyyy";
+
+async function handlepromise(){
+    try{
+        const data = await fetch(API);
+        const result = await data.json();
+        console.log(result);
+    }
+    catch(err){
+        console.log(err.message);
+    }
+};
+
+handlepromise();
+</script>
+
+Notice the username is wrong (mosurupodiadarshreddyyy).
+GitHub will return 404 Not Found.
+
+1️⃣ What try...catch Does
+
+try...catch is used to handle runtime errors.
+
+Structure:
+
+try {
+   // code that might fail
+}
+catch(err) {
+   // handle the error
+}
+
+If an error happens in try, control moves to catch.
+
+2️⃣ Power of try...catch with async/await
+
+Before async/await, errors in promises were handled like this:
+
+fetch(API)
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.log(err));
+
+With async/await we use try/catch, which looks like normal synchronous error handling.
+
+try {
+   const data = await fetch(API);
+} catch(err) {
+   console.log(err);
+}
+
+This is cleaner and easier to read.
+
+3️⃣ Step-by-Step Execution of Your Code
+Step 1 — handlepromise() runs
+
+Call stack:
+
+handlepromise()
+Step 2 — Inside try block
+const data = await fetch(API);
+
+fetch() sends a network request to GitHub.
+
+Async function pauses at await.
+
+Step 3 — Server responds
+
+GitHub returns:
+
+404 Not Found
+
+But here is a very important rule:
+
+fetch() does NOT reject the promise for HTTP errors like 404
+
+It only rejects for network failures.
+
+So the promise still resolves.
+
+data becomes a Response object:
+
+Response {
+  status: 404,
+  ok: false,
+  body: ReadableStream
+}
+4️⃣ Next Line Executes
+const result = await data.json();
+
+GitHub returns a JSON error response like:
+
+{
+  "message": "Not Found",
+  "documentation_url": "https://docs.github.com/rest"
+}
+
+So result becomes:
+
+{
+  message: "Not Found"
+}
+5️⃣ Console Output
+
+Your console prints:
+
+{ message: "Not Found" }
+
+Your catch block does NOT run.
+
+Why?
+
+Because no JavaScript error occurred.
+
+6️⃣ When catch Actually Runs
+
+catch runs only if a real error happens, like:
+
+❌ Network failure
+
+Example:
+
+fetch("https://wrongdomain1234.com")
+
+Now fetch rejects the promise.
+
+Then catch runs:
+
+Failed to fetch
+❌ JSON parsing failure
+
+If .json() fails, catch also runs.
+
+

@@ -1,0 +1,48 @@
+<style>
+    .hello{
+        color: red;
+    }
+</style>
+
+<!-- // onclick button execute async function 
+<div class="hello">H E L L O</div>
+
+ <button onclick="runasync()">
+    ASYNC
+ </button>
+
+ <p id="value">...</p>
+ <script>
+    const promise = async function(){
+        return "hi";
+    }
+    function runasync () {
+        const res = promise();
+        res.then((res) => {
+            document.getElementById("value").innerHTML = res;
+        })
+    }
+   
+ </script> -->
+
+
+<div class="hello">H E L L O</div>
+ <script>
+    const API =  "https://api.github.com/users/mosurupodiadarshreddy";
+    async function handlepromise(){
+        try{
+            const data = await fetch(API);
+            if(!data.ok){
+              const err = new Error("data not found");
+            }
+            const result = await data.json();
+            console.log(result);
+        }
+        catch(err){
+            console.log(err.message);
+        }
+
+    };
+   handlepromise();
+
+ </script>
